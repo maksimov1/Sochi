@@ -94,7 +94,7 @@ library SafeMath {
   }
 }
 
-contract Ownable {
+contract Ownable {  //модификатор овнабл и передача владения
   address public owner;
 
 
@@ -151,7 +151,7 @@ contract Ownable {
   }
 }
 
-contract RoleControl is Ownable{
+contract RoleControl is Ownable{    //роли: никто, торгаш, покупатель + логика создателя контракта
   enum Role{EMPTY, SELLER, BUYER}
   mapping (address => Role) roles; 
   uint256 public pricePerToken;
@@ -236,6 +236,8 @@ contract BlueRuble is ERC20, RoleControl {
   function transfer(address _to, uint256 _value) public returns (bool) {
     require(_value <= balances[msg.sender]);
     require(_to != address(0));
+    
+    require(roles[msg.sender] != roles[_to]);// !!! токены нельзя переслать между пользователями или торгашами
 
     balances[msg.sender] = balances[msg.sender].sub(_value);
     balances[_to] = balances[_to].add(_value);
@@ -357,3 +359,4 @@ contract BlueRuble is ERC20, RoleControl {
   
 
 }
+
