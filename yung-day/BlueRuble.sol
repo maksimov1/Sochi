@@ -93,16 +93,65 @@ library SafeMath {
     return a % b;
   }
 }
+contract Ownable {
+  address public owner;
+
+  event OwnershipTransferred(
+    address indexed previousOwner,
+    address indexed newOwner
+  );
 
 
-/**
- * @title Standard ERC20 token
- *
- * @dev Implementation of the basic standard token.
- * https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md
- * Based on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol
- */
-contract StandardToken is ERC20 {
+  /**
+   * @dev The Ownable constructor sets the original `owner` of the contract to the sender
+   * account.
+   */
+  constructor() public {
+    owner = msg.sender;
+  }
+
+  /**
+   * @dev Throws if called by any account other than the owner.
+   */
+  modifier onlyOwner() {
+    require(msg.sender == owner);
+    _;
+  }
+
+
+  /**
+   * @dev Allows the current owner to transfer control of the contract to a newOwner.
+   * @param _newOwner The address to transfer ownership to.
+   */
+  function transferOwnership(address _newOwner) public onlyOwner {
+    _transferOwnership(_newOwner);
+  }
+
+  /**
+   * @dev Transfers control of the contract to a newOwner.
+   * @param _newOwner The address to transfer ownership to.
+   */
+  function _transferOwnership(address _newOwner) internal {
+    require(_newOwner != address(0));
+    emit OwnershipTransferred(owner, _newOwner);
+    owner = _newOwner;
+  }
+}
+
+contract RoleControl is Ownable{
+  enum Role{SELLER, BUYER}
+  mapping (address => Role) public roles; 
+  
+  function setRole(address client, Role _role) public onlyOwner{
+      roles[client] =_role;
+  }
+  
+  function checkRole(address client) public view returns (Role){
+      return roles[client];
+  }
+}
+
+contract BlueRuble is ERC20, RoleControl {
   using SafeMath for uint256;
 
   mapping (address => uint256) private balances;
@@ -243,74 +292,6 @@ contract StandardToken is ERC20 {
     allowed[_account][msg.sender] = allowed[_account][msg.sender].sub(_amount);
     _burn(_account, _amount);
   }
-}
-
-
-/**
- * @title Ownable
- * @dev The Ownable contract has an owner address, and provides basic authorization control
- * functions, this simplifies the implementation of "user permissions".
- */
-contract Ownable {
-  address public owner;
-
-  event OwnershipTransferred(
-    address indexed previousOwner,
-    address indexed newOwner
-  );
-
-
-  /**
-   * @dev The Ownable constructor sets the original `owner` of the contract to the sender
-   * account.
-   */
-  constructor() public {
-    owner = msg.sender;
-  }
-
-  /**
-   * @dev Throws if called by any account other than the owner.
-   */
-  modifier onlyOwner() {
-    require(msg.sender == owner);
-    _;
-  }
-
-
-  /**
-   * @dev Allows the current owner to transfer control of the contract to a newOwner.
-   * @param _newOwner The address to transfer ownership to.
-   */
-  function transferOwnership(address _newOwner) public onlyOwner {
-    _transferOwnership(_newOwner);
-  }
-
-  /**
-   * @dev Transfers control of the contract to a newOwner.
-   * @param _newOwner The address to transfer ownership to.
-   */
-  function _transferOwnership(address _newOwner) internal {
-    require(_newOwner != address(0));
-    emit OwnershipTransferred(owner, _newOwner);
-    owner = _newOwner;
-  }
-}
-
-contract RoleControl is Ownable{
-  enum Role{SELLER, BUYER}
-  mapping (address => Role) public roles; 
-  
-  function setRole(address client, Role _role) public onlyOwner{
-      roles[client] =_role;
-  }
-  
-  function checkRole(address client) public view returns (Role){
-      return roles[client];
-  }
-}
-
-
-contract BlueRub is StandardToken, Ownable {
   event Mint(address indexed to, uint256 amount);
 
 
@@ -337,6 +318,7 @@ contract BlueRub is StandardToken, Ownable {
     emit Mint(_to, _amount);
     return true;
   }
-
-  
 }
+
+
+
