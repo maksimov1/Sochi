@@ -1,9 +1,5 @@
 pragma solidity ^0.4.24;
 
-/**
- * @title ERC20 interface
- * @dev see https://github.com/ethereum/EIPs/issues/20
- */
 contract ERC20 {
   function totalSupply() public view returns (uint256);
 
@@ -204,54 +200,6 @@ contract StandardToken is ERC20 {
   }
 
   /**
-   * @dev Increase the amount of tokens that an owner allowed to a spender.
-   * approve should be called when allowed[_spender] == 0. To increment
-   * allowed value is better to use this function to avoid 2 calls (and wait until
-   * the first transaction is mined)
-   * From MonolithDAO Token.sol
-   * @param _spender The address which will spend the funds.
-   * @param _addedValue The amount of tokens to increase the allowance by.
-   */
-  function increaseApproval(
-    address _spender,
-    uint256 _addedValue
-  )
-    public
-    returns (bool)
-  {
-    allowed[msg.sender][_spender] = (
-      allowed[msg.sender][_spender].add(_addedValue));
-    emit Approval(msg.sender, _spender, allowed[msg.sender][_spender]);
-    return true;
-  }
-
-  /**
-   * @dev Decrease the amount of tokens that an owner allowed to a spender.
-   * approve should be called when allowed[_spender] == 0. To decrement
-   * allowed value is better to use this function to avoid 2 calls (and wait until
-   * the first transaction is mined)
-   * From MonolithDAO Token.sol
-   * @param _spender The address which will spend the funds.
-   * @param _subtractedValue The amount of tokens to decrease the allowance by.
-   */
-  function decreaseApproval(
-    address _spender,
-    uint256 _subtractedValue
-  )
-    public
-    returns (bool)
-  {
-    uint256 oldValue = allowed[msg.sender][_spender];
-    if (_subtractedValue >= oldValue) {
-      allowed[msg.sender][_spender] = 0;
-    } else {
-      allowed[msg.sender][_spender] = oldValue.sub(_subtractedValue);
-    }
-    emit Approval(msg.sender, _spender, allowed[msg.sender][_spender]);
-    return true;
-  }
-
-  /**
    * @dev Internal function that mints an amount of the token and assigns it to
    * an account. This encapsulates the modification of balances such that the
    * proper events are emitted.
@@ -306,8 +254,6 @@ contract StandardToken is ERC20 {
 contract Ownable {
   address public owner;
 
-
-  event OwnershipRenounced(address indexed previousOwner);
   event OwnershipTransferred(
     address indexed previousOwner,
     address indexed newOwner
@@ -330,16 +276,6 @@ contract Ownable {
     _;
   }
 
-  /**
-   * @dev Allows the current owner to relinquish control of the contract.
-   * @notice Renouncing to ownership will leave the contract without an owner.
-   * It will not be possible to call the functions with the `onlyOwner`
-   * modifier anymore.
-   */
-  function renounceOwnership() public onlyOwner {
-    emit OwnershipRenounced(owner);
-    owner = address(0);
-  }
 
   /**
    * @dev Allows the current owner to transfer control of the contract to a newOwner.
@@ -360,23 +296,23 @@ contract Ownable {
   }
 }
 
-
-/**
- * @title Mintable token
- * @dev Simple ERC20 Token example, with mintable token creation
- * Based on code by TokenMarketNet: https://github.com/TokenMarketNet/ico/blob/master/contracts/MintableToken.sol
- */
-contract MintableToken is StandardToken, Ownable {
-  event Mint(address indexed to, uint256 amount);
-  event MintFinished();
-
-  bool public mintingFinished = false;
-
-
-  modifier canMint() {
-    require(!mintingFinished);
-    _;
+contract RoleControl is Ownable{
+  enum Role{SELLER, BUYER}
+  mapping (address => Role) public roles; 
+  
+  function setRole(address client, Role _role) public onlyOwner{
+      roles[client] =_role;
   }
+  
+  function checkRole(address client) public view returns (Role){
+      return roles[client];
+  }
+}
+
+
+contract BlueRub is StandardToken, Ownable {
+  event Mint(address indexed to, uint256 amount);
+
 
   modifier hasMintPermission() {
     require(msg.sender == owner);
@@ -395,7 +331,6 @@ contract MintableToken is StandardToken, Ownable {
   )
     public
     hasMintPermission
-    canMint
     returns (bool)
   {
     _mint(_to, _amount);
@@ -403,13 +338,5 @@ contract MintableToken is StandardToken, Ownable {
     return true;
   }
 
-  /**
-   * @dev Function to stop minting new tokens.
-   * @return True if the operation was successful.
-   */
-  function finishMinting() public onlyOwner canMint returns (bool) {
-    mintingFinished = true;
-    emit MintFinished();
-    return true;
-  }
+  
 }
