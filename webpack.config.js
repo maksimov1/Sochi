@@ -22,8 +22,8 @@ module.exports = {
          { from: './src/images/', to: "images" },
       ]),
       new ImageminPlugin({
-         test: 'images/**',
-         cacheFolder: path.resolve(__dirname, 'cache'),
+         test: 'images/*',
+         cacheFolder: path.resolve(__dirname, 'cache/images'),
          plugins: [
             imageminMozjpeg({
                quality: 20,
