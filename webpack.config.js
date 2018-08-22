@@ -13,7 +13,7 @@ module.exports = {
       filename: 'main.js'
    },
    plugins: [
-      new CleanWebpackPlugin(['build'], {exclude:['images', 'contracts']}),
+      new CleanWebpackPlugin(['build'], {exclude:['contracts']}),
       new CopyWebpackPlugin([
          { from: './src/index.html', to: "index.html" },
          { from: './src/elements.html', to: "elements.html" },
