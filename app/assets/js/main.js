@@ -1,7 +1,7 @@
-import breakpoints from './breakpoints.min.js';
-import browser from './browser.min.js';
-import './jquery.scrollex.min.js';
-import './jquery.scrolly.min.js';
+import breakpoints from './../vendor/breakpoints.min.js';
+import browser from './../vendor/browser.min.js';
+import './../vendor/jquery.scrollex.min.js';
+import './../vendor/jquery.scrolly.min.js';
 import './util.js';
 
 import '../sass/main.scss';
