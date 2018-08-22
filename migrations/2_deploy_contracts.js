@@ -1,5 +1,5 @@
-var BlueRubble = artifacts.require('./BlueRubble.sol')
+var BlueRuble = artifacts.require('BlueRuble')
 
 module.exports = function (deployer) {
-  deployer.deploy(BlueRubble)
+  deployer.deploy(BlueRuble)
 }
