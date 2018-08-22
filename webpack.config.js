@@ -1,7 +1,7 @@
 const path = require('path')
 const webpack = require("webpack");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-//const CleanWebpackPlugin = require("clean-webpack-plugin");
+const CleanWebpackPlugin = require("clean-webpack-plugin");
 const ImageminPlugin = require('imagemin-webpack-plugin').default;
 const imageminMozjpeg = require('imagemin-mozjpeg');
 
@@ -13,7 +13,7 @@ module.exports = {
       filename: 'main.js'
    },
    plugins: [
-      //new CleanWebpackPlugin(['build']),
+      new CleanWebpackPlugin(['build'], {exclude:['images', 'contracts']}),
       new CopyWebpackPlugin([
          { from: './src/index.html', to: "index.html" },
          { from: './src/elements.html', to: "elements.html" },
