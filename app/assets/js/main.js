@@ -8,6 +8,10 @@ import '../sass/main.scss';
 
 import Web3 from 'web3';
 
+import ContractABI from '../../../build/contracts/BlueRuble.json';
+
+var blurContract;
+
 (function($) {
 
    var	$window = $(window),
@@ -342,6 +346,10 @@ import Web3 from 'web3';
       if (typeof web3 !== 'undefined') {
          // Use the Mist/wallet provider.
          window.web3 = new Web3(web3.currentProvider);
+      } else {
+         window.web3 = new Web3.providers.HttpProvider('http://localhost:8545');
       }
+      web3 = window.web3;
+      blurContract = new web3.eth.contract(ContractABI);
    });
 })(jQuery);
