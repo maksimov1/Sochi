@@ -12,3 +12,10 @@
 1. rm -fr ./build
 2. truffle compile
 3. truffle migrate --network rinkeby
+
+## При обновлении контракта нужно деплоить так
+
+Для того, чтобы закидывался только BlueRuble.sol, так как Migrations.sol вы вряд ли меняли.
+
+1. truffle migrate -f 2 --network <network>
+ 
