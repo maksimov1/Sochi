@@ -3,7 +3,7 @@ require('babel-register')
 
 var HDWalletProvider = require("truffle-hdwallet-provider");
 
-var mnemonic = "laundry length release immense soda situate weather chef summer must coyote problemlaundry length release immense soda situate weather chef summer must coyote problem";
+var mnemonic = 'laundry length release immense soda situate weather chef summer must coyote problem';
 
 module.exports = {
    solc: {
