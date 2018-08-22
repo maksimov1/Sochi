@@ -1,7 +1,9 @@
 const path = require('path')
 const webpack = require("webpack");
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require("clean-webpack-plugin");
+const ImageminPlugin = require('imagemin-webpack-plugin').default;
+const imageminMozjpeg = require('imagemin-mozjpeg');
 
 module.exports = {
    entry: './app/assets/js/main.js',
@@ -19,6 +21,15 @@ module.exports = {
          { from: './app/landing.html', to: "landing.html" },
          { from: './app/images/', to: "images" },
       ]),
+      new ImageminPlugin({
+         test: 'images/**',
+         plugins: [
+            imageminMozjpeg({
+               quality: 60,
+               progressive: true
+            })
+         ]
+      }),
       new webpack.ProvidePlugin({
          '$': "jquery",
          'jQuery': "jquery",
