@@ -4,6 +4,8 @@ import './jquery.scrollex.min.js';
 import './jquery.scrolly.min.js';
 import './util.js';
 
+import '../sass/main.scss';
+
 (function($) {
 
 	var	$window = $(window),

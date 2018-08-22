@@ -15,8 +15,6 @@ module.exports = {
          { from: './app/elements.html', to: "elements.html" },
          { from: './app/generic.html', to: "generic.html" },
          { from: './app/landing.html', to: "landing.html" },
-         { from: './app/assets/css', to: "assets/css" },
-         { from: './app/assets/fonts', to: "assets/fonts" },
          { from: './app/images/', to: "images" },
       ]),
       new webpack.ProvidePlugin({
@@ -37,7 +35,18 @@ module.exports = {
                presets: ['env'],
                plugins: ['transform-react-jsx', 'transform-object-rest-spread', 'transform-runtime']
             }
-         }
+         },
+         {
+         test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
+         use: [{
+           loader: 'file-loader',
+           options: {
+             name: '[name].[ext]',
+             outputPath: 'assets/fonts/',    // where the fonts will go
+             publicPath: '../'       // override the default path
+           }
+         }]
+       },
       ]
    }
 }
