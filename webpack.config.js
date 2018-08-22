@@ -4,6 +4,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const ImageminPlugin = require('imagemin-webpack-plugin').default;
 const imageminMozjpeg = require('imagemin-mozjpeg');
+const CompressionWebpackPlugin = require('compression-webpack-plugin');
 
 module.exports = {
    entry: './src/assets/js/main.js',
@@ -35,7 +36,14 @@ module.exports = {
          '$': "jquery",
          'jQuery': "jquery",
          'window.jQuery': "jquery"
-      })
+      }),
+      new CompressionWebpackPlugin({
+         asset: '[path].gz[query]',
+         algorithm: 'gzip',
+         test: new RegExp('\\.(js|css)$'),
+         threshold: 10240,
+         minRatio: 0.8
+      }),
    ],
    devtool: 'source-map',
    module: {
