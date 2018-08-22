@@ -15,16 +15,15 @@ module.exports = {
          { from: './app/elements.html', to: "elements.html" },
          { from: './app/generic.html', to: "generic.html" },
          { from: './app/landing.html', to: "landing.html" },
-         { from: './app/assets/js', to: "assets/js" },
          { from: './app/assets/css', to: "assets/css" },
          { from: './app/assets/fonts', to: "assets/fonts" },
          { from: './app/images/', to: "images" },
       ]),
-      //new webpack.ProvidePlugin({
-      //   '$': "jquery",
-      //   'jQuery': "jquery",
-      //   'jquery': "jquery",
-      //}),
+      new webpack.ProvidePlugin({
+         '$': "jquery",
+         'jQuery': "jquery",
+         'window.jQuery': "jquery"
+      }),
    ],
    devtool: 'source-map',
    module: {

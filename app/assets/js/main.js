@@ -1,9 +1,8 @@
-//import "./jquery.min.js";
-//import { default as breakpoints } from "./breakpoints.min.js";
-//import { default as browser} from "./browser.min.js";
-//import "./jquery.scrollex.min.js";
-//import "./jquery.scrolly.min.js";
-//import "./util.js";
+import breakpoints from './breakpoints.min.js';
+import browser from './browser.min.js';
+import './jquery.scrollex.min.js';
+import './jquery.scrolly.min.js';
+import './util.js';
 
 (function($) {
 
@@ -142,7 +141,7 @@
 			// Link.
 				if ($link.length > 0) {
 
-					$x = $link.clone()
+					var $x = $link.clone()
 						.text('')
 						.addClass('primary')
 						.appendTo($this);

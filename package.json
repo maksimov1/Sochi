@@ -5,8 +5,7 @@
   "scripts": {
     "test": "truffle test",
     "lint": "eslint ./app/assets/js",
-    "prepare": "truffle compile && npm test && npm run lint && webpack-cli --config ./webpack.config.js",
-    "build": "webpack",
+    "build": "webpack -p",
     "dev": "webpack-dev-server",
     "watch": "webpack --watch"
   },
@@ -42,5 +41,10 @@
     "webpack": "^4.12.0",
     "webpack-cli": "^3.0.6",
     "webpack-dev-server": "^3.1.4"
+  },
+  "dependencies": {
+    "jquery": "^3.3.1",
+    "jquery.scrollex": "^0.2.1",
+    "jquery.scrolly": "0.0.1"
   }
 }
