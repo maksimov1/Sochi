@@ -1,8 +1,9 @@
-/*
-	Forty by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
-*/
+//import "./jquery.min.js";
+//import { default as breakpoints } from "./breakpoints.min.js";
+//import { default as browser} from "./browser.min.js";
+//import "./jquery.scrollex.min.js";
+//import "./jquery.scrolly.min.js";
+//import "./util.js";
 
 (function($) {
 
