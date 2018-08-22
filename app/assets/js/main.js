@@ -10,7 +10,7 @@ import Web3 from 'web3';
 
 import ContractABI from '../../../build/contracts/BlueRuble.json';
 
-var blurContract;
+var Blur;
 
 (function($) {
 
@@ -350,6 +350,8 @@ var blurContract;
          window.web3 = new Web3.providers.HttpProvider('http://localhost:8545');
       }
       web3 = window.web3;
-      blurContract = new web3.eth.contract(ContractABI);
+      console.log(web3.version);
+      Blur = new web3.eth.Contract(ContractABI, ContractABI.networks['5777'].address);
+      console.log(Blur.options);
    });
 })(jQuery);
