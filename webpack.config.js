@@ -6,7 +6,7 @@ const ImageminPlugin = require('imagemin-webpack-plugin').default;
 const imageminMozjpeg = require('imagemin-mozjpeg');
 
 module.exports = {
-   entry: './app/assets/js/main.js',
+   entry: './src/assets/js/main.js',
    mode: 'production',
    output: {
       path: path.resolve(__dirname, 'build'),
@@ -15,11 +15,11 @@ module.exports = {
    plugins: [
       //new CleanWebpackPlugin(['build']),
       new CopyWebpackPlugin([
-         { from: './app/index.html', to: "index.html" },
-         { from: './app/elements.html', to: "elements.html" },
-         { from: './app/generic.html', to: "generic.html" },
-         { from: './app/landing.html', to: "landing.html" },
-         { from: './app/images/', to: "images" },
+         { from: './src/index.html', to: "index.html" },
+         { from: './src/elements.html', to: "elements.html" },
+         { from: './src/generic.html', to: "generic.html" },
+         { from: './src/landing.html', to: "landing.html" },
+         { from: './src/images/', to: "images" },
       ]),
       new ImageminPlugin({
          test: 'images/**',
