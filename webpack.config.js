@@ -23,9 +23,10 @@ module.exports = {
       ]),
       new ImageminPlugin({
          test: 'images/**',
+         cacheFolder: path.resolve(__dirname, 'cache'),
          plugins: [
             imageminMozjpeg({
-               quality: 60,
+               quality: 20,
                progressive: true
             })
          ]
