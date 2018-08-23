@@ -4,8 +4,6 @@ import './../vendor/jquery.scrollex.min.js';
 import './../vendor/jquery.scrolly.min.js';
 import './util.js';
 
-import '../sass/main.scss';
-
 import BlurContractDesc from '../../../build/contracts/BlueRuble.json';
 
 var Blur;
