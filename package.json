@@ -4,7 +4,6 @@
   "description": "Blue Rubble",
   "scripts": {
     "test": "truffle test",
-    "lint": "eslint ./src/assets/js",
     "build": "webpack -p",
     "dev": "webpack-dev-server",
     "watch": "webpack --watch"
@@ -16,11 +15,6 @@
     "compression-webpack-plugin": "^1.1.11",
     "copy-webpack-plugin": "^4.5.1",
     "css-loader": "^1.0.0",
-    "eslint": "^5.4.0",
-    "eslint-config-standard": "^11.0.0",
-    "eslint-plugin-mocha": "^5.2.0",
-    "eslint-plugin-promise": "^4.0.0",
-    "eslint-plugin-standard": "^3.1.0",
     "file-loader": "^2.0.0",
     "font-awesome": "^4.7.0",
     "imagemin-mozjpeg": "^7.0.0",
@@ -32,6 +26,7 @@
     "sass-loader": "^7.1.0",
     "source-map-support": "^0.5.3",
     "style-loader": "^0.22.1",
+    "truffle": "^4.1.14",
     "truffle-hdwallet-provider": "0.0.6",
     "web3": "1.0.0-beta.35",
     "webpack": "^4.17.1",
