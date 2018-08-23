@@ -6,7 +6,7 @@ import './util.js';
 
 import '../sass/main.scss';
 
-import ContractABI from '../../../build/contracts/BlueRuble.json';
+import BlurContractDesc from '../../../build/contracts/BlueRuble.json';
 
 var Blur;
 
@@ -349,7 +349,8 @@ var Blur;
       }
       web3 = window.web3;
       console.log(web3.version);
-      Blur = new web3.eth.Contract(ContractABI, ContractABI.networks['5777'].address);
+      web3.eth.net.getId().then(console.log);
+      Blur = new web3.eth.Contract(BlurContractDesc.abi, BlurContractDesc.networks['5777'].address);
       console.log(Blur.options);
    });
 })(jQuery);
