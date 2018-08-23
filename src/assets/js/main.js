@@ -10,6 +10,7 @@ import BlurContractDesc from '../../../build/contracts/BlueRuble.json';
 
 var Blur;
 var Account;
+var Balance;
 
 (function($) {
 
@@ -351,21 +352,27 @@ var Account;
       web3 = window.web3;
       console.log(web3.version);
 
-      Account = web3.eth.accounts[0];
-      console.log(Account);
+      web3.eth.getAccounts().then(accs => { Account = accs[0] });
       setInterval(function() {
-         if (web3.eth.accounts[0] !== Account) {
-            Account = web3.eth.accounts[0];
-            console.log(Account);
-         }
+         web3.eth.getAccounts().then(accs => {
+            if (accs[0] !== Account) {
+               Account = accs[0];
+               console.log("New account: " + Account);
+            }
+         });
       }, 100);
 
       web3.eth.net.getId().then(netId => {
-         Blur = new web3.eth.Contract(
-                    BlurContractDesc.abi,
-                    BlurContractDesc.networks[netId].address
-         );
-         console.log(Blur.options);
+         console.log("NetworkID: " + netId);
+         if (netId in BlurContractDesc.networks) {
+            Blur = new web3.eth.Contract(
+                       BlurContractDesc.abi,
+                       BlurContractDesc.networks[netId].address
+            );
+            console.log(Blur.options);
+         } else {
+            alert("The contract is not deployed in the network " + netId);
+         }
       });
    });
 })(jQuery);
