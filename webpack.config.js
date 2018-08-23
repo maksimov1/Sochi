@@ -5,6 +5,7 @@ const CleanWebpackPlugin = require("clean-webpack-plugin");
 const ImageminPlugin = require('imagemin-webpack-plugin').default;
 const imageminMozjpeg = require('imagemin-mozjpeg');
 const CompressionWebpackPlugin = require('compression-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
    entry: './src/assets/js/main.js',
@@ -38,6 +39,12 @@ module.exports = {
          'window.jQuery': "jquery",
          'Web3': "web3",
       }),
+      new MiniCssExtractPlugin({
+         // Options similar to the same options in webpackOptions.output
+         // both options are optional
+         filename: "[name].css",
+         chunkFilename: "[id].css"
+      }),
       new CompressionWebpackPlugin({
          asset: '[path].gz[query]',
          algorithm: 'gzip',
@@ -49,7 +56,10 @@ module.exports = {
    devtool: 'source-map',
    module: {
       rules: [
-         { test: /\.s?css$/, use: [ 'style-loader', 'css-loader', 'sass-loader' ] },
+         {
+            test: /\.scss$/,
+            use: [ MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader' ]
+         },
          {
             test: /\.js$/,
             exclude: /(node_modules|bower_components)/,
