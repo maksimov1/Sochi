@@ -347,6 +347,7 @@ var Balance;
          // Use the Mist/wallet provider.
          window.web3 = new Web3(web3.currentProvider);
       } else {
+         alert("Пожалуйста, установите MetaMask или используйте Toshi на мобильном телефоне.");
          window.web3 = new Web3.providers.HttpProvider('http://localhost:8545');
       }
       web3 = window.web3;

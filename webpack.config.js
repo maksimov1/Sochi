@@ -61,15 +61,6 @@ module.exports = {
             use: [ MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader' ]
          },
          {
-            test: /\.js$/,
-            exclude: /(node_modules|bower_components)/,
-            loader: 'babel-loader',
-            query: {
-               presets: ['env'],
-               plugins: ['transform-runtime']
-            }
-         },
-         {
             test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
             use: [{
                loader: 'file-loader',
