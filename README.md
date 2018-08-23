@@ -1,8 +1,7 @@
 ## Что сделать сразу после клонирования репозитория
 
-1. sudo npm install -g yarn
-2. sudo npm install -g truffle
-3. yarn install
+1. sudo npm install -g truffle
+2. npm install
 
 ### Запуск сервера
 
