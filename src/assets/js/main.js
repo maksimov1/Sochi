@@ -9,6 +9,7 @@ import '../sass/main.scss';
 import BlurContractDesc from '../../../build/contracts/BlueRuble.json';
 
 var Blur;
+var Account;
 
 (function($) {
 
@@ -349,8 +350,22 @@ var Blur;
       }
       web3 = window.web3;
       console.log(web3.version);
-      web3.eth.net.getId().then(console.log);
-      Blur = new web3.eth.Contract(BlurContractDesc.abi, BlurContractDesc.networks['5777'].address);
-      console.log(Blur.options);
+
+      Account = web3.eth.accounts[0];
+      console.log(Account);
+      setInterval(function() {
+         if (web3.eth.accounts[0] !== Account) {
+            Account = web3.eth.accounts[0];
+            console.log(Account);
+         }
+      }, 100);
+
+      web3.eth.net.getId().then(netId => {
+         Blur = new web3.eth.Contract(
+                    BlurContractDesc.abi,
+                    BlurContractDesc.networks[netId].address
+         );
+         console.log(Blur.options);
+      });
    });
 })(jQuery);
