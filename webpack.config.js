@@ -19,8 +19,10 @@ module.exports = {
       new CopyWebpackPlugin([
          { from: './src/index.html', to: "index.html" },
          { from: './src/elements.html', to: "elements.html" },
-         { from: './src/generic.html', to: "generic.html" },
-         { from: './src/landing.html', to: "landing.html" },
+         { from: './src/faq.html', to: "faq.html" },
+         { from: './src/bank.html', to: "bank.html" },
+         { from: './src/client.html', to: "client.html" },
+         { from: './src/tsp.html', to: "tsp.html" },
          { from: './src/images/', to: "images" },
       ]),
       new ImageminPlugin({
