@@ -41,6 +41,20 @@ function balance_of(addr) {
    });
 }
 
+function isEmpty(str) {
+   return (!str || 0 === str.length);
+}
+
+function check_field(field, id_field, def_placeholder, err_placeholder) {
+   if (isEmpty(field)) {
+      $(id_field).attr('placeholder', err_placeholder);
+      return false;
+   } else {
+      $(id_field).attr('placeholder', def_placeholder);
+      return true;
+   }
+}
+
 (function($) {
 
    var	$window = $(window),
@@ -391,20 +405,34 @@ function balance_of(addr) {
       $("#BankSendTokensTspButton").click(function () {
          var address = $("#TspAddress").val();
          var count   = $("#TspCount").val();
-         alert("Bank -> Tsp: " + address + " Count: " + count);
+         if (
+             check_field(address, "#TspAddress", "Введите адрес ТСП", "Пожалуйста, Введите адрес ТСП") &&
+             check_field(count, "#TspCount", "Введите количество баллов", "Пожалуйста, Введите количество баллов")
+         ) {
+            alert("Bank -> Tsp: " + address + " Count: " + count);
+         }
       });
 
       $("#ClientSendTokensTspButton").click(function () {
          var address = $("#TspAddress").val();
          var count   = $("#TspCount").val();
-         alert("Client -> Tsp: " + address + " Count: " + count);
+         if (
+             check_field(address, "#TspAddress", "Введите адрес ТСП", "Пожалуйста, Введите адрес ТСП") &&
+             check_field(count, "#TspCount", "Введите количество баллов", "Пожалуйста, Введите количество баллов")
+         ) {
+            alert("Client -> Tsp: " + address + " Count: " + count);
+         }
       });
 
       $("#TspSendTokensClientButton").click(function () {
          var address = $("#ClientAddress").val();
          var count   = $("#ClientCount").val();
-         alert("Tsp -> Client: " + address + " Count: " + count);
+         if (
+             check_field(address, "#ClientAddress", "Введите адрес Клиента", "Пожалуйста, Введите адрес ТСП") &&
+             check_field(count, "#ClientCount", "Введите количество баллов", "Пожалуйста, Введите количество баллов")
+         ) {
+            alert("Tsp -> Client: " + address + " Count: " + count);
+         }
       });
-
    });
 })(jQuery);
