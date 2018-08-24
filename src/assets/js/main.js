@@ -8,6 +8,24 @@ import '../sass/main.scss';
 
 import BlurContractDesc from '../../../build/contracts/BlueRuble.json';
 
+var Role = {
+   OWNER            : -1,
+   EMPTY            : 0,
+   SELLER           : 1,
+   BUYER            : 2,
+   SELLER_REQUESTED : 3,
+   BUYER_REQUESTED  : 4
+};
+
+var ReverseRole = {
+   '-1' : Role.OWNER,
+   0  : Role.EMPTY,
+   1  : Role.SELLER,
+   2  : Role.BUYER,
+   3  : Role.SELLER_REQUESTED,
+   4  : Role.BUYER_REQUESTED
+};
+
 var Blur;
 var Account;
 var Balance;
@@ -20,6 +38,8 @@ async function load_contract() {
          BlurContractDesc.abi,
          BlurContractDesc.networks[net_id].address
       );
+      // Just to debug in Chrome
+      window.Blur = Blur;
    } else {
       alert("The contract is not deployed in the network " + net_id);
    }
@@ -35,10 +55,32 @@ async function get_account() {
    }
 }
 
-function balance_of(addr) {
-   Blur.balanceOf.call(addr, (e, r) => {
-      alert(r);
-   });
+async function get_owner() {
+   var owner = await Blur.methods.owner().call();
+   console.log("Contract Owner: " + owner);
+   return owner;
+}
+
+async function balance_of(addr) {
+   var balance = await Blur.methods.balanceOf(addr).call();
+   console.log("Balance of addr: " + addr + " balance: " + balance);
+   return balance;
+}
+
+async function check_role(addr) {
+   var role = await Blur.methods.checkRole(addr).call();
+   if (role in ReverseRole && role != Role.EMPTY) {
+      role = ReverseRole[role];
+   } else {
+      var owner = await get_owner();
+      if (addr == owner) {
+         role = Role.OWNER;
+      } else {
+         role = Role.EMPTY;
+      }
+   }
+   console.log("Role of addr: " + addr + " role: " + role);
+   return role;
 }
 
 function isEmpty(str) {
@@ -394,7 +436,7 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
          window.web3 = new Web3.providers.HttpProvider('http://localhost:8545');
       }
       web3 = window.web3;
-      console.log(web3.version);
+      console.log("Web3 version: " + web3.version);
 
       load_contract();
 
