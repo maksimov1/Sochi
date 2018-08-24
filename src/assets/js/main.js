@@ -119,6 +119,18 @@ async function send_confirm_registration(application_number) {
       });
 }
 
+async function send_transfer(to_addr, value) {
+   return Blur.methods.transfer(to_addr, value).send({from: Account})
+      .on('receipt', function (receipt) {
+         $("#TxStatus").text("Success");
+         alert("Success");
+      })
+      .on('error', function (error) {
+         $("#TxStatus").text(error);
+         alert("Error");
+      });
+}
+
 
 function isEmpty(str) {
    return (!str || 0 === str.length);
@@ -488,7 +500,8 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
              check_field(address, "#TspAddress", "Введите адрес ТСП", "Пожалуйста, Введите адрес ТСП") &&
              check_field(count, "#TspCount", "Введите количество баллов", "Пожалуйста, Введите количество баллов")
          ) {
-            alert("Bank -> Tsp: " + address + " Count: " + count);
+            console.log("Bank -> Tsp: " + address + " Count: " + count);
+            send_transfer(address, count);
          }
       });
 
@@ -499,7 +512,8 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
              check_field(address, "#TspAddress", "Введите адрес ТСП", "Пожалуйста, Введите адрес ТСП") &&
              check_field(count, "#TspCount", "Введите количество баллов", "Пожалуйста, Введите количество баллов")
          ) {
-            alert("Client -> Tsp: " + address + " Count: " + count);
+            console.log("Client -> Tsp: " + address + " Count: " + count);
+            send_transfer(address, count);
          }
       });
 
@@ -510,7 +524,8 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
              check_field(address, "#ClientAddress", "Введите адрес Клиента", "Пожалуйста, Введите адрес ТСП") &&
              check_field(count, "#ClientCount", "Введите количество баллов", "Пожалуйста, Введите количество баллов")
          ) {
-            alert("Tsp -> Client: " + address + " Count: " + count);
+            console.log("Tsp -> Client: " + address + " Count: " + count);
+            send_transfer(address, count);
          }
       });
 
