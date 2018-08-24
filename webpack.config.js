@@ -18,11 +18,11 @@ module.exports = {
       new CleanWebpackPlugin(['build'], {exclude:['contracts']}),
       new CopyWebpackPlugin([
          { from: './src/index.html', to: "index.html" },
-         { from: './src/elements.html', to: "elements.html" },
          { from: './src/registration.html', to: "registration.html" },
          { from: './src/bank.html', to: "bank.html" },
          { from: './src/client.html', to: "client.html" },
          { from: './src/tsp.html', to: "tsp.html" },
+         { from: './src/about_us.html', to: "about_us.html" },
          { from: './src/images/', to: "images" },
       ]),
       new ImageminPlugin({
