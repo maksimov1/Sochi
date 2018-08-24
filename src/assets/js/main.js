@@ -12,6 +12,35 @@ var Blur;
 var Account;
 var Balance;
 
+async function load_contract() {
+   var net_id = await web3.eth.net.getId();
+   console.log("NetworkID: " + net_id);
+   if (net_id in BlurContractDesc.networks) {
+      Blur = new web3.eth.Contract(
+         BlurContractDesc.abi,
+         BlurContractDesc.networks[net_id].address
+      );
+   } else {
+      alert("The contract is not deployed in the network " + net_id);
+   }
+}
+
+async function get_account() {
+   var accs = await web3.eth.getAccounts();
+   if (accs[0] !== Account) {
+      Account = accs[0];
+      Balance = await web3.eth.getBalance(Account);
+      console.log("New account: " + Account);
+      console.log("New balance: " + Balance);
+   }
+}
+
+function balance_of(addr) {
+   Blur.balanceOf.call(addr, (e, r) => {
+      alert(r);
+   });
+}
+
 (function($) {
 
    var	$window = $(window),
@@ -353,32 +382,29 @@ var Balance;
       web3 = window.web3;
       console.log(web3.version);
 
-      web3.eth.getAccounts().then(accs => { Account = accs[0]; console.log("Initial account: " + Account); });
-      Balance = web3.eth.getBalance(Account).then(balance => { Balance = balance; console.log("Initial balance: " + Balance); });
+      load_contract();
+
       setInterval(function() {
-         web3.eth.getAccounts().then(accs => {
-            if (accs[0] !== Account) {
-               Account = accs[0];
-               console.log("New account: " + Account);
-               web3.eth.getBalance(Account).then(balance => {
-                   Balance = balance;
-                   console.log("New balance: " + Balance);
-               });
-            }
-         });
+         get_account();
       }, 100);
 
-      web3.eth.net.getId().then(netId => {
-         console.log("NetworkID: " + netId);
-         if (netId in BlurContractDesc.networks) {
-            Blur = new web3.eth.Contract(
-                       BlurContractDesc.abi,
-                       BlurContractDesc.networks[netId].address
-            );
-            console.log(Blur.options);
-         } else {
-            alert("The contract is not deployed in the network " + netId);
-         }
+      $("#BankSendTokensTspButton").click(function () {
+         var address = $("#TspAddress").val();
+         var count   = $("#TspCount").val();
+         alert("Bank -> Tsp: " + address + " Count: " + count);
       });
+
+      $("#ClientSendTokensTspButton").click(function () {
+         var address = $("#TspAddress").val();
+         var count   = $("#TspCount").val();
+         alert("Client -> Tsp: " + address + " Count: " + count);
+      });
+
+      $("#TspSendTokensClientButton").click(function () {
+         var address = $("#ClientAddress").val();
+         var count   = $("#ClientCount").val();
+         alert("Tsp -> Client: " + address + " Count: " + count);
+      });
+
    });
 })(jQuery);
