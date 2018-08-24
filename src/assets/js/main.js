@@ -35,6 +35,12 @@ async function get_account() {
    }
 }
 
+function balance_of(addr) {
+   Blur.balanceOf.call(addr, (e, r) => {
+      alert(r);
+   });
+}
+
 (function($) {
 
    var	$window = $(window),
@@ -381,6 +387,24 @@ async function get_account() {
       setInterval(function() {
          get_account();
       }, 100);
+
+      $("#BankSendTokensTspButton").click(function () {
+         var address = $("#TspAddress").val();
+         var count   = $("#TspCount").val();
+         alert("Bank -> Tsp: " + address + " Count: " + count);
+      });
+
+      $("#ClientSendTokensTspButton").click(function () {
+         var address = $("#TspAddress").val();
+         var count   = $("#TspCount").val();
+         alert("Client -> Tsp: " + address + " Count: " + count);
+      });
+
+      $("#TspSendTokensClientButton").click(function () {
+         var address = $("#ClientAddress").val();
+         var count   = $("#ClientCount").val();
+         alert("Tsp -> Client: " + address + " Count: " + count);
+      });
 
    });
 })(jQuery);
