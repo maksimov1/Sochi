@@ -83,6 +83,43 @@ async function check_role(addr) {
    return role;
 }
 
+async function send_client_register_request(phone) {
+   return Blur.methods.sendRegRequest(phone, Role.BUYER_REQUESTED).send({from: Account})
+      .on('receipt', function (receipt) {
+         $("#TxStatus").text("Success");
+         alert("Success");
+      })
+      .on('error', function (error) {
+         $("#TxStatus").text(error);
+         alert("Error");
+      });
+}
+
+async function send_tsp_register_request(ogrn) {
+   return Blur.methods.sendRegRequest(ogrn, Role.SELLER_REQUESTED).send({from: Account})
+      .on('receipt', function (receipt) {
+         $("#TxStatus").text("Success");
+         alert("Success");
+      })
+      .on('error', function (error) {
+         $("#TxStatus").text(error);
+         alert("Error");
+      });
+}
+
+async function send_confirm_registration(application_number) {
+   return Blur.methods.applyRegRequest(application_number).send({from: Account})
+      .on('receipt', function (receipt) {
+         $("#TxStatus").text("Success");
+         alert("Success");
+      })
+      .on('error', function (error) {
+         $("#TxStatus").text(error);
+         alert("Error");
+      });
+}
+
+
 function isEmpty(str) {
    return (!str || 0 === str.length);
 }
@@ -479,16 +516,24 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
 
       // Registration
       $("#RegisterTspButton").click(function () {
-         var ogrn = $("#ogrn").val();
+         var ogrn = $("#ogrn").val().replace(/[^0-9]/g, '');
          if (check_field(ogrn, "#ogrn", "Введите номер ОГРН", "Пожалуйста, Введите номер ОГРН")) {
-            alert(ogrn);
+            send_tsp_register_request(ogrn);
          }
       });
 
       $("#RegisterClientButton").click(function() {
-         var phone = $("#phone").val();
+         var phone = $("#phone").val().replace(/[^0-9]/g, '');
          if (check_field(phone, "#phone", "Введине номер телефона", "Пожалуйста, Введите номер телефона")) {
-            alert(phone);
+            send_client_register_request(phone);
+         }
+      });
+
+      // Confirm Registration
+      $("#BankConfirmRegistrationButton").click(function() {
+         var application_number = $("#ApplicationNumber").val().replace(/[^0-9]/g, '');
+         if (check_field(application_number, "#ApplicationNumber", "Введине номер заявки", "Пожалуйста, Введите номер заявки")) {
+            send_confirm_registration(application_number - 1);
          }
       });
    });
