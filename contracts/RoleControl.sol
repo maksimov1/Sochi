@@ -39,18 +39,21 @@ contract RoleControl is Ownable {
       }
       else
       {
-       roles[applicant]=Role.BUYER;   
+       roles[applicant]=Role.BUYER;
       }
-  } 
+  }
+
+  function rejectRegRequest(uint256 num) onlyOwner public
+  {
+      address applicant = requests[num];
+      require(roles[applicant] == Role.SELLER_REQUESTED || roles[applicant] == Role.BUYER_REQUESTED);
+      roles[applicant]=Role.EMPTY;
+  }
 
   constructor() public {
       pricePerToken = 1;
       minPayement = 1;
       numberOfRequests = 0;
-  }
-  
-  function setRole(address client, Role _role) public onlyOwner {
-      roles[client] =_role;
   }
   
   function checkRole(address client) public view returns (Role) {
