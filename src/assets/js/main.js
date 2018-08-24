@@ -9,7 +9,7 @@ import '../sass/main.scss';
 import BlurContractDesc from '../../../build/contracts/BlueRuble.json';
 
 var Role = {
-   OWNER            : -1,
+   BANK             : -1,
    EMPTY            : 0,
    SELLER           : 1,
    BUYER            : 2,
@@ -18,12 +18,12 @@ var Role = {
 };
 
 var ReverseRole = {
-   '-1' : Role.OWNER,
-   0  : Role.EMPTY,
-   1  : Role.SELLER,
-   2  : Role.BUYER,
-   3  : Role.SELLER_REQUESTED,
-   4  : Role.BUYER_REQUESTED
+   '-1' : Role.BANK,
+   0    : Role.EMPTY,
+   1    : Role.SELLER,
+   2    : Role.BUYER,
+   3    : Role.SELLER_REQUESTED,
+   4    : Role.BUYER_REQUESTED
 };
 
 var Blur;
@@ -74,7 +74,7 @@ async function check_role(addr) {
    } else {
       var owner = await get_owner();
       if (addr == owner) {
-         role = Role.OWNER;
+         role = Role.BANK;
       } else {
          role = Role.EMPTY;
       }
@@ -474,6 +474,21 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
              check_field(count, "#ClientCount", "Введите количество баллов", "Пожалуйста, Введите количество баллов")
          ) {
             alert("Tsp -> Client: " + address + " Count: " + count);
+         }
+      });
+
+      // Registration
+      $("#RegisterTspButton").click(function () {
+         var ogrn = $("#ogrn").val();
+         if (check_field(ogrn, "#ogrn", "Введите номер ОГРН", "Пожалуйста, Введите номер ОГРН")) {
+            alert(ogrn);
+         }
+      });
+
+      $("#RegisterClientButton").click(function() {
+         var phone = $("#phone").val();
+         if (check_field(phone, "#phone", "Введине номер телефона", "Пожалуйста, Введите номер телефона")) {
+            alert(phone);
          }
       });
    });
