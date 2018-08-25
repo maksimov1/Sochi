@@ -40,20 +40,38 @@ async function load_contract() {
       );
       // Just to debug in Chrome
       window.Blur = Blur;
+
+      return Blur;
    } else {
       alert("The contract is not deployed in the network " + net_id);
    }
 }
 
-async function get_account() {
+async function update_account() {
    var accs = await web3.eth.getAccounts();
    if (accs[0] !== Account) {
       Account = accs[0];
+      Blur.options.from = Account;
       Balance = await web3.eth.getBalance(Account);
       console.log("New account: " + Account);
       console.log("New balance: " + Balance);
    }
 }
+
+async function init_contract() {
+   await load_contract();
+
+   var accs = await web3.eth.getAccounts();
+   Account = accs[0];
+   Blur.options.from = Account;
+
+   setInterval(function() {
+      update_account();
+   }, 100);
+
+   return Account;
+}
+
 
 async function get_owner() {
    var owner = await Blur.methods.owner().call();
@@ -83,8 +101,26 @@ async function check_role(addr) {
    return role;
 }
 
+async function get_total_amount() {
+   var total = await Blur.methods.totalSupply().call();
+   console.log("Total number of tokens: " + total);
+   return total;
+}
+
+async function price_per_token() {
+   var price = await Blur.methods.pricePerToken().call();
+   console.log("Price per token: " + price);
+   return price;
+}
+
+async function min_payment() {
+   var min = await Blur.methods.minPayment().call();
+   console.log("Min payment: " + min);
+   return min;
+}
+
 async function send_client_register_request(phone) {
-   return Blur.methods.sendRegRequest(phone, Role.BUYER_REQUESTED).send({from: Account})
+   return Blur.methods.sendRegRequest(phone, Role.BUYER_REQUESTED).send()
       .on('receipt', function (receipt) {
          $("#TxStatus").text("Success");
          alert("Success");
@@ -96,7 +132,7 @@ async function send_client_register_request(phone) {
 }
 
 async function send_tsp_register_request(ogrn) {
-   return Blur.methods.sendRegRequest(ogrn, Role.SELLER_REQUESTED).send({from: Account})
+   return Blur.methods.sendRegRequest(ogrn, Role.SELLER_REQUESTED).send()
       .on('receipt', function (receipt) {
          $("#TxStatus").text("Success");
          alert("Success");
@@ -108,7 +144,7 @@ async function send_tsp_register_request(ogrn) {
 }
 
 async function send_confirm_registration(application_number) {
-   return Blur.methods.applyRegRequest(application_number).send({from: Account})
+   return Blur.methods.applyRegRequest(application_number).send()
       .on('receipt', function (receipt) {
          $("#TxStatus").text("Success");
          alert("Success");
@@ -120,7 +156,7 @@ async function send_confirm_registration(application_number) {
 }
 
 async function send_transfer(to_addr, value) {
-   return Blur.methods.transfer(to_addr, value).send({from: Account})
+   return Blur.methods.transfer(to_addr, value).send()
       .on('receipt', function (receipt) {
          $("#TxStatus").text("Success");
          alert("Success");
@@ -487,12 +523,9 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
       web3 = window.web3;
       console.log("Web3 version: " + web3.version);
 
-      load_contract();
+      init_contract();
 
-      setInterval(function() {
-         get_account();
-      }, 100);
-
+      /* Don't needed
       $("#BankSendTokensTspButton").click(function () {
          var address = $("#TspAddress").val();
          var count   = $("#TspCount").val();
@@ -504,6 +537,7 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
             send_transfer(address, count);
          }
       });
+      */
 
       $("#ClientSendTokensTspButton").click(function () {
          var address = $("#TspAddress").val();
@@ -526,6 +560,13 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
          ) {
             console.log("Tsp -> Client: " + address + " Count: " + count);
             send_transfer(address, count);
+         }
+      });
+
+      $("#TspBuyTokensButton").click(function () {
+         var number_of_tokens = $("#TokensToBuy").val().replace(/[^0-9]/g, '');
+         if (check_field(number_of_tokens, "#TokensToBuy", "Введите количество токенов", "Пожалуйста, Введите количество токенов")) {
+            console.log("Tsp -> Bank: wants to buy " + number_of_tokens + " tokens");
          }
       });
 
