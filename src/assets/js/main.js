@@ -167,6 +167,24 @@ async function send_transfer(to_addr, value) {
       });
 }
 
+async function send_buy_tokens(num) {
+   var price = await price_per_token();
+   var total_price = num * price;
+
+   console.log("Tsp -> Bank: wants to buy " + num + " tokens by price " + price + " Total: " + total_price);
+
+   //value: web3.utils.toWei(total_price.toString(), "ether")
+   return web3.eth.sendTransaction({from: Account, to: Blur.options.address, value: web3.utils.toWei(total_price.toString(), "ether")})
+      .on('receipt', function (receipt) {
+         $("#TxStatus").text("Success");
+         alert("Success");
+      })
+      .on('error', function (error) {
+         $("#TxStatus").text(error);
+         alert("Error");
+      });
+}
+
 
 function isEmpty(str) {
    return (!str || 0 === str.length);
@@ -547,6 +565,7 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
              check_field(count, "#TspCount", "Введите количество баллов", "Пожалуйста, Введите количество баллов")
          ) {
             console.log("Client -> Tsp: " + address + " Count: " + count);
+            balance_of(Account);
             send_transfer(address, count);
          }
       });
@@ -559,6 +578,7 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
              check_field(count, "#ClientCount", "Введите количество баллов", "Пожалуйста, Введите количество баллов")
          ) {
             console.log("Tsp -> Client: " + address + " Count: " + count);
+            balance_of(Account);
             send_transfer(address, count);
          }
       });
@@ -566,7 +586,7 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
       $("#TspBuyTokensButton").click(function () {
          var number_of_tokens = $("#TokensToBuy").val().replace(/[^0-9]/g, '');
          if (check_field(number_of_tokens, "#TokensToBuy", "Введите количество токенов", "Пожалуйста, Введите количество токенов")) {
-            console.log("Tsp -> Bank: wants to buy " + number_of_tokens + " tokens");
+            send_buy_tokens(number_of_tokens);
          }
       });
 
