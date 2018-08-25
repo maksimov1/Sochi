@@ -52,7 +52,7 @@ contract RoleControl is Ownable {
       require(roles[applicant] == Role.SELLER_REQUESTED || roles[applicant] == Role.BUYER_REQUESTED);
 
       roles[applicant] = Role.EMPTY;
-      isPhoneRegistered[_phone] = false;
+      isPhoneRegistered[phoneByAddress[applicant]] = false;
 
       numberOfRequests--;
   }
