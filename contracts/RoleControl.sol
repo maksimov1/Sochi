@@ -8,7 +8,7 @@ contract RoleControl is Ownable {
   mapping (address => Role) public roles;
    
   uint256 public pricePerToken;
-  uint256 public minPayement;
+  uint256 public minPayment;
   
   mapping (address => uint256) public phoneByAddress;
   mapping (uint256 => bool) public isPhoneRegistered;
@@ -28,6 +28,7 @@ contract RoleControl is Ownable {
       requests[numberOfRequests] = msg.sender;
       phoneByAddress[msg.sender] = _phone;
       numberOfRequests++;
+
       return numberOfRequests - 1;
   } 
 
@@ -35,26 +36,30 @@ contract RoleControl is Ownable {
   {
       address applicant = requests[num];
       require(roles[applicant] == Role.SELLER_REQUESTED || roles[applicant] == Role.BUYER_REQUESTED);
-      if(roles[applicant] == Role.SELLER_REQUESTED)
-      {
-          roles[applicant]=Role.SELLER;
+
+      if (roles[applicant] == Role.SELLER_REQUESTED) {
+          roles[applicant] = Role.SELLER;
+      } else {
+         roles[applicant] = Role.BUYER;
       }
-      else
-      {
-       roles[applicant]=Role.BUYER;
-      }
+
+      numberOfRequests--;
   }
 
   function rejectRegRequest(uint256 num) onlyOwner public
   {
       address applicant = requests[num];
       require(roles[applicant] == Role.SELLER_REQUESTED || roles[applicant] == Role.BUYER_REQUESTED);
-      roles[applicant]=Role.EMPTY;
+
+      roles[applicant] = Role.EMPTY;
+      isPhoneRegistered[_phone] = false;
+
+      numberOfRequests--;
   }
 
   constructor() public {
       pricePerToken = 1;
-      minPayement = 1;
+      minPayment = 1;
       numberOfRequests = 0;
   }
   
@@ -67,9 +72,9 @@ contract RoleControl is Ownable {
       pricePerToken = newPrice;
   }
   
-  function changeMinPayement(uint256 newMinPayement) public onlyOwner {
-      require(newMinPayement != 0);
-      minPayement = newMinPayement;
+  function changeMinPayment(uint256 newMinPayment) public onlyOwner {
+      require(newMinPayment != 0);
+      minPayment = newMinPayment;
   }
 }
 
