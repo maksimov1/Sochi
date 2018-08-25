@@ -18,9 +18,11 @@ contract RoleControl is Ownable {
 
   function sendRegRequest(uint256 _phone, Role _role) public returns (uint256)
   {
+      require(msg.sender != owner);
       require(roles[msg.sender] == Role.EMPTY);
       require(isPhoneRegistered[_phone] == false);
       require(_role == Role.SELLER_REQUESTED || _role == Role.BUYER_REQUESTED);
+
       isPhoneRegistered[_phone] = true;
       roles[msg.sender] = _role;
       requests[numberOfRequests] = msg.sender;
