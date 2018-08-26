@@ -53,8 +53,28 @@ async function update_account() {
       Account = accs[0];
       Blur.options.from = Account;
       Balance = await web3.eth.getBalance(Account);
+      update_info_panel();
       console.log("New account: " + Account);
       console.log("New balance: " + Balance);
+   }
+}
+
+async function update_info_panel() {
+
+   $("#current_balance").html('');
+   $("#current_token_price").html('');
+
+   var cur_account = Account;
+   var role = await check_role(cur_account);
+
+   if (role == Role.BUYER || role == Role.SELLER) {
+      var balance = await balance_of(cur_account);
+      $("#current_balance").html("Ваши баллы: " + balance);
+   }
+
+   if (role == Role.SELLER || role == Role.BANK) {
+      var price = await price_per_token();
+      $("#current_token_price").html("Стоимость: " + price);
    }
 }
 
@@ -68,6 +88,8 @@ async function init_contract() {
    setInterval(function() {
       update_account();
    }, 100);
+
+   update_info_panel();
 
    return Account;
 }
