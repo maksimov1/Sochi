@@ -153,6 +153,19 @@ async function send_client_register_request(phone) {
       });
 }
 
+async function send_new_token_price(new_price) {
+   // need to update interface
+   return Blur.methods.changePrice(new_price).send()
+      .on('receipt', function (receipt) {
+         $("#TxStatus").text("Success");
+         alert("Success");
+      })
+      .on('error', function (error) {
+         $("#TxStatus").text(error);
+         alert("Error");
+      });
+}
+
 async function send_tsp_register_request(ogrn) {
    return Blur.methods.sendRegRequest(ogrn, Role.SELLER_REQUESTED).send()
       .on('receipt', function (receipt) {
@@ -578,6 +591,16 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
          }
       });
       */
+
+      $("#BankChangeTokenPriceButton").click(function () {
+         var new_price = $("#NewTokenPrice").val().replace(/[^0-9]/g, '');
+         if (
+             check_field(new_price, "#NewTokenPrice", "Введите новую цену токена", "Пожалуйста, Введите новую цену токена")
+         ) {
+            console.log("New Token Price: " + new_price);
+            send_new_token_price(new_price);
+         }
+      });
 
       $("#ClientSendTokensTspButton").click(function () {
          var address = $("#TspAddress").val();
