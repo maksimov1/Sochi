@@ -4,7 +4,7 @@ import 'openzeppelin-solidity/contracts/ownership/Ownable.sol';
 
 contract RoleControl is Ownable {
   //роли: никто, торгаш, покупатель + логика создателя контракта
-  enum Role {EMPTY, SELLER, BUYER, SELLER_REQUESTED, BUYER_REQUESTED}
+  enum Role {EMPTY, TSP, CLIENT, TSP_REQUESTED, CLIENT_REQUESTED}
   mapping (address => Role) public roles;
    
   uint256 public pricePerToken;
@@ -21,7 +21,7 @@ contract RoleControl is Ownable {
       require(msg.sender != owner);
       require(roles[msg.sender] == Role.EMPTY);
       require(isPhoneRegistered[_phone] == false);
-      require(_role == Role.SELLER_REQUESTED || _role == Role.BUYER_REQUESTED);
+      require(_role == Role.TSP_REQUESTED || _role == Role.CLIENT_REQUESTED);
 
       isPhoneRegistered[_phone] = true;
       roles[msg.sender] = _role;
@@ -35,12 +35,12 @@ contract RoleControl is Ownable {
   function applyRegRequest(uint256 num) onlyOwner public
   {
       address applicant = requests[num];
-      require(roles[applicant] == Role.SELLER_REQUESTED || roles[applicant] == Role.BUYER_REQUESTED);
+      require(roles[applicant] == Role.TSP_REQUESTED || roles[applicant] == Role.CLIENT_REQUESTED);
 
-      if (roles[applicant] == Role.SELLER_REQUESTED) {
-          roles[applicant] = Role.SELLER;
+      if (roles[applicant] == Role.TSP_REQUESTED) {
+          roles[applicant] = Role.TSP;
       } else {
-         roles[applicant] = Role.BUYER;
+         roles[applicant] = Role.CLIENT;
       }
 
       numberOfRequests--;
@@ -49,7 +49,7 @@ contract RoleControl is Ownable {
   function rejectRegRequest(uint256 num) onlyOwner public
   {
       address applicant = requests[num];
-      require(roles[applicant] == Role.SELLER_REQUESTED || roles[applicant] == Role.BUYER_REQUESTED);
+      require(roles[applicant] == Role.TSP_REQUESTED || roles[applicant] == Role.CLIENT_REQUESTED);
 
       roles[applicant] = Role.EMPTY;
       isPhoneRegistered[phoneByAddress[applicant]] = false;

@@ -59,8 +59,8 @@ contract BlueRuble is ERC20, RoleControl {
     require(_value <= balances[msg.sender]);
     require(_to != address(0));
     
-    require(roles[msg.sender] == Role.SELLER || roles[msg.sender] == Role.BUYER);
-    require(roles[_to] == Role.SELLER || roles[_to] == Role.BUYER);
+    require(roles[msg.sender] == Role.TSP || roles[msg.sender] == Role.CLIENT);
+    require(roles[_to] == Role.TSP || roles[_to] == Role.CLIENT);
     require(roles[msg.sender] != roles[_to]);// !!! токены нельзя переслать между пользователями или торгашами
 
     balances[msg.sender] = balances[msg.sender].sub(_value);
@@ -102,8 +102,8 @@ contract BlueRuble is ERC20, RoleControl {
     require(_value <= allowed[_from][msg.sender]);
     require(_to != address(0));
 
-    require(roles[_from] == Role.SELLER || roles[_from] == Role.BUYER);
-    require(roles[_to] == Role.SELLER || roles[_to] == Role.BUYER);
+    require(roles[_from] == Role.TSP || roles[_from] == Role.CLIENT);
+    require(roles[_to] == Role.TSP || roles[_to] == Role.CLIENT);
     require(roles[_from] != roles[_to]);// !!! токены нельзя переслать между пользователями или торгашами
 
     balances[_from] = balances[_from].sub(_value);
@@ -167,7 +167,7 @@ contract BlueRuble is ERC20, RoleControl {
   }
 
   function () public payable {
-      require(roles[msg.sender] == Role.SELLER);
+      require(roles[msg.sender] == Role.TSP);
       _mint(msg.sender, (msg.value).div(pricePerToken));
       owner.transfer(msg.value);
       
