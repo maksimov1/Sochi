@@ -16,8 +16,8 @@ contract RoleControl is Ownable {
   uint256 public numberOfRequests;
   
 
-  modifier onlyAdminOrOwner() {
-      require(roles[msg.sender] == Role.ADMIN || msg.sender == owner);
+  modifier onlyAdmin() {
+      require(roles[msg.sender] == Role.ADMIN);
       _;
   }
 
@@ -36,7 +36,7 @@ contract RoleControl is Ownable {
       return numberOfRequests - 1;
   } 
 
-  function applyRegRequest(uint256 _num) onlyAdminOrOwner public
+  function applyRegRequest(uint256 _num) onlyAdmin public
   {
       address applicant = requests[_num];
       require(roles[applicant] == Role.REQ_TSP || roles[applicant] == Role.REQ_CLIENT);
@@ -46,19 +46,6 @@ contract RoleControl is Ownable {
       } else {
          roles[applicant] = Role.CLIENT;
       }
-
-      numberOfRequests--;
-  }
-
-  function rejectRegRequest(uint256 _num) onlyAdminOrOwner public
-  {
-      address applicant = requests[_num];
-      require(roles[applicant] == Role.REQ_TSP || roles[applicant] == Role.REQ_CLIENT);
-
-      roles[applicant] = Role.EMPTY;
-      isPhoneRegistered[phoneByAddress[applicant]] = false;
-
-      numberOfRequests--;
   }
 
   //function addAdmin() onlyOwner public
@@ -84,17 +71,17 @@ contract RoleControl is Ownable {
   }
   
   // В реальности должен быть onlyOwner,
-  // но в демонстрационных целях мы разрешаем onlyAdminOrOwner
+  // но в демонстрационных целях мы разрешаем onlyAdmin
   //function changePrice(uint256 newPrice) public onlyOwner {
-  function changePrice(uint256 newPrice) public onlyAdminOrOwner {
+  function changePrice(uint256 newPrice) public onlyAdmin {
       require(newPrice != 0);
       pricePerToken = newPrice;
   }
 
   // В реальности должен быть onlyOwner,
-  // но в демонстрационных целях мы разрешаем onlyAdminOrOwner
+  // но в демонстрационных целях мы разрешаем onlyAdmin
   //function changeMinPayment(uint256 newMinPayment) public onlyOwner {
-  function changeMinPayment(uint256 newMinPayment) public onlyAdminOrOwner {
+  function changeMinPayment(uint256 newMinPayment) public onlyAdmin {
       require(newMinPayment != 0);
       minPayment = newMinPayment;
   }
