@@ -9,21 +9,21 @@ import '../sass/main.scss';
 import BlurContractDesc from '../../../build/contracts/BlueRuble.json';
 
 var Role = {
-   BANK             : -1,
-   EMPTY            : 0,
-   SELLER           : 1,
-   BUYER            : 2,
-   SELLER_REQUESTED : 3,
-   BUYER_REQUESTED  : 4
+   BANK        : -1,
+   EMPTY       : 0,
+   TSP         : 1,
+   CLIENT      : 2,
+   REQ_TSP     : 3,
+   REQ_CLIENT  : 4
 };
 
 var ReverseRole = {
    '-1' : Role.BANK,
    0    : Role.EMPTY,
-   1    : Role.SELLER,
-   2    : Role.BUYER,
-   3    : Role.SELLER_REQUESTED,
-   4    : Role.BUYER_REQUESTED
+   1    : Role.TSP,
+   2    : Role.CLIENT,
+   3    : Role.REQ_TSP,
+   4    : Role.REQ_CLIENT
 };
 
 var Blur;
@@ -67,12 +67,12 @@ async function update_info_panel() {
    var cur_account = Account;
    var role = await check_role(cur_account);
 
-   if (role == Role.BUYER || role == Role.SELLER) {
+   if (role == Role.CLIENT || role == Role.TSP) {
       var balance = await balance_of(cur_account);
       $("#current_balance").html("Ваши баллы: " + balance);
    }
 
-   if (role == Role.SELLER || role == Role.BANK) {
+   if (role == Role.TSP || role == Role.BANK) {
       var price = await price_per_token();
       $("#current_token_price").html("Стоимость: " + price);
    }
@@ -142,7 +142,7 @@ async function min_payment() {
 }
 
 async function send_client_register_request(phone) {
-   return Blur.methods.sendRegRequest(phone, Role.BUYER_REQUESTED).send()
+   return Blur.methods.sendRegRequest(phone, Role.REQ_CLIENT).send()
       .on('receipt', function (receipt) {
          $("#TxStatus").text("Success");
          alert("Success");
@@ -167,7 +167,7 @@ async function send_new_token_price(new_price) {
 }
 
 async function send_tsp_register_request(ogrn) {
-   return Blur.methods.sendRegRequest(ogrn, Role.SELLER_REQUESTED).send()
+   return Blur.methods.sendRegRequest(ogrn, Role.REQ_TSP).send()
       .on('receipt', function (receipt) {
          $("#TxStatus").text("Success");
          alert("Success");
