@@ -63,7 +63,8 @@ contract BlueRuble is ERC20, RoleControl {
 
     require(roles[msg.sender] == Role.TSP || roles[msg.sender] == Role.CLIENT);
     require(roles[_to]        == Role.TSP || roles[_to]        == Role.CLIENT);
-    require(roles[msg.sender] != roles[_to]);// !!! токены нельзя переслать между пользователями или торгашами
+    // !!! токены нельзя переслать между торгашами
+    require(roles[msg.sender] != Role.TSP || roles[_to]        != Role.TSP);
 
     if (roles[msg.sender] == Role.TSP) {
       balanceByCoalition[_to][coalitionByAddress[msg.sender]] = balanceByCoalition[_to][coalitionByAddress[msg.sender]].add(_value);
@@ -112,7 +113,8 @@ contract BlueRuble is ERC20, RoleControl {
 
     require(roles[_from] == Role.TSP || roles[_from] == Role.CLIENT);
     require(roles[_to]   == Role.TSP || roles[_to]   == Role.CLIENT);
-    require(roles[_from] != roles[_to]);// !!! токены нельзя переслать между пользователями или торгашами
+    // !!! токены нельзя переслать между торгашами
+    require(roles[msg.sender] != Role.TSP || roles[_to]        != Role.TSP);
 
     balances[_from] = balances[_from].sub(_value);
     balances[_to] = balances[_to].add(_value);
