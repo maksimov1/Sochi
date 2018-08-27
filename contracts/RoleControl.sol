@@ -16,8 +16,8 @@ contract RoleControl is Ownable {
   uint256 public numberOfRequests;
   
 
-  modifier onlyAdmin() {
-      require(roles[msg.sender] == Role.ADMIN);
+  modifier onlyAdminOrOwner() {
+      require(roles[msg.sender] == Role.ADMIN || msg.sender == owner);
       _;
   }
 
@@ -36,7 +36,7 @@ contract RoleControl is Ownable {
       return numberOfRequests - 1;
   } 
 
-  function applyRegRequest(uint256 _num) onlyAdmin public
+  function applyRegRequest(uint256 _num) onlyAdminOrOwner public
   {
       address applicant = requests[_num];
       require(roles[applicant] == Role.REQ_TSP || roles[applicant] == Role.REQ_CLIENT);
@@ -50,7 +50,7 @@ contract RoleControl is Ownable {
       numberOfRequests--;
   }
 
-  function rejectRegRequest(uint256 _num) onlyAdmin public
+  function rejectRegRequest(uint256 _num) onlyAdminOrOwner public
   {
       address applicant = requests[_num];
       require(roles[applicant] == Role.REQ_TSP || roles[applicant] == Role.REQ_CLIENT);
@@ -84,17 +84,17 @@ contract RoleControl is Ownable {
   }
   
   // В реальности должен быть onlyOwner,
-  // но в демонстрационных целях мы разрешаем onlyAdmin
+  // но в демонстрационных целях мы разрешаем onlyAdminOrOwner
   //function changePrice(uint256 newPrice) public onlyOwner {
-  function changePrice(uint256 newPrice) public onlyAdmin {
+  function changePrice(uint256 newPrice) public onlyAdminOrOwner {
       require(newPrice != 0);
       pricePerToken = newPrice;
   }
 
   // В реальности должен быть onlyOwner,
-  // но в демонстрационных целях мы разрешаем onlyAdmin
+  // но в демонстрационных целях мы разрешаем onlyAdminOrOwner
   //function changeMinPayment(uint256 newMinPayment) public onlyOwner {
-  function changeMinPayment(uint256 newMinPayment) public onlyAdmin {
+  function changeMinPayment(uint256 newMinPayment) public onlyAdminOrOwner {
       require(newMinPayment != 0);
       minPayment = newMinPayment;
   }

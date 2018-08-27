@@ -9,21 +9,23 @@ import '../sass/main.scss';
 import BlurContractDesc from '../../../build/contracts/BlueRuble.json';
 
 var Role = {
-   BANK        : -1,
+   OWNER       : -1,
    EMPTY       : 0,
-   TSP         : 1,
-   CLIENT      : 2,
-   REQ_TSP     : 3,
-   REQ_CLIENT  : 4
+   ADMIN       : 1,
+   TSP         : 2,
+   CLIENT      : 3,
+   REQ_TSP     : 4,
+   REQ_CLIENT  : 5
 };
 
 var ReverseRole = {
-   '-1' : Role.BANK,
+   '-1' : Role.OWNER,
    0    : Role.EMPTY,
-   1    : Role.TSP,
-   2    : Role.CLIENT,
-   3    : Role.REQ_TSP,
-   4    : Role.REQ_CLIENT
+   1    : Role.ADMIN,
+   2    : Role.TSP,
+   3    : Role.CLIENT,
+   4    : Role.REQ_TSP,
+   5    : Role.REQ_CLIENT
 };
 
 var Blur;
@@ -72,7 +74,7 @@ async function update_info_panel() {
       $("#current_balance").html("Ваши баллы: " + balance);
    }
 
-   if (role == Role.TSP || role == Role.BANK) {
+   if (role == Role.TSP || role == Role.ADMIN || role == Role.OWNER) {
       var price = await price_per_token();
       $("#current_token_price").html("Стоимость: " + price);
    }
@@ -114,7 +116,7 @@ async function check_role(addr) {
    } else {
       var owner = await get_owner();
       if (addr == owner) {
-         role = Role.BANK;
+         role = Role.OWNER;
       } else {
          role = Role.EMPTY;
       }
