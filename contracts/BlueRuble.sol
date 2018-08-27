@@ -15,6 +15,10 @@ contract BlueRuble is ERC20, RoleControl {
 
   mapping (address => mapping (address => uint256)) private allowed;
 
+  mapping (address => mapping (uint256 => uint256)) public balanceByCoalition;
+
+  mapping (address => uint256) public coalitionByAddress;
+
   uint256 private totalSupply_;
 
   /**
@@ -58,11 +62,19 @@ contract BlueRuble is ERC20, RoleControl {
   function transfer(address _to, uint256 _value) public returns (bool) {
     require(_value <= balances[msg.sender]);
     require(_to != address(0));
-    
+
     require(roles[msg.sender] == Role.TSP || roles[msg.sender] == Role.CLIENT);
     require(roles[_to] == Role.TSP || roles[_to] == Role.CLIENT);
     require(roles[msg.sender] != roles[_to]);// !!! токены нельзя переслать между пользователями или торгашами
 
+    if (roles[msg.sender] == Role.TSP)
+    {
+      balanceByCoalition[_to][coalitionByAddress[msg.sender]] = balanceByCoalition[_to][coalitionByAddress[msg.sender]].add(_value);
+    }
+    else
+    {
+      balanceByCoalition[msg.sender][coalitionByAddress[_to]] = balanceByCoalition[msg.sender][coalitionByAddress[_to]].sub(_value);
+    }
     balances[msg.sender] = balances[msg.sender].sub(_value);
     balances[_to] = balances[_to].add(_value);
     emit Transfer(msg.sender, _to, _value);
@@ -157,7 +169,7 @@ contract BlueRuble is ERC20, RoleControl {
     allowed[_account][msg.sender] = allowed[_account][msg.sender].sub(_amount);
     _burn(_account, _amount);
   }
-  
+
   event Mint(address indexed to, uint256 amount);
 
 
@@ -170,7 +182,7 @@ contract BlueRuble is ERC20, RoleControl {
       require(roles[msg.sender] == Role.TSP);
       _mint(msg.sender, (msg.value).div(pricePerToken));
       owner.transfer(msg.value);
-      
+
   }
 
   function mint(

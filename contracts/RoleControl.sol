@@ -6,15 +6,15 @@ contract RoleControl is Ownable {
   //роли: никто, админ, торгаш, покупатель + запросы на роли от пользователей
   enum Role {EMPTY, ADMIN, TSP, CLIENT, REQ_TSP, REQ_CLIENT}
   mapping (address => Role) public roles;
-   
+
   uint256 public pricePerToken;
   uint256 public minPayment;
-  
+
   mapping (address => uint256) public phoneByAddress;
   mapping (uint256 => bool) public isPhoneRegistered;
   mapping (uint256 => address) public requests;
   uint256 public numberOfRequests;
-  
+
 
   modifier onlyAdmin() {
       require(roles[msg.sender] == Role.ADMIN);
@@ -34,15 +34,16 @@ contract RoleControl is Ownable {
       numberOfRequests++;
 
       return numberOfRequests - 1;
-  } 
+  }
 
-  function applyRegRequest(uint256 _num) onlyAdmin public
+  function applyRegRequest(uint256 _num, uint256 coalition) onlyAdmin public
   {
       address applicant = requests[_num];
       require(roles[applicant] == Role.REQ_TSP || roles[applicant] == Role.REQ_CLIENT);
 
       if (roles[applicant] == Role.REQ_TSP) {
           roles[applicant] = Role.TSP;
+          coalitionByAddress[applicant] = coalition;
       } else {
          roles[applicant] = Role.CLIENT;
       }
@@ -65,11 +66,11 @@ contract RoleControl is Ownable {
       phoneByAddress[owner]                    = 74959137474;
       isPhoneRegistered[phoneByAddress[owner]] = true;
   }
-  
+
   function checkRole(address client) public view returns (Role) {
       return roles[client];
   }
-  
+
   // В реальности должен быть onlyOwner,
   // но в демонстрационных целях мы разрешаем onlyAdmin
   //function changePrice(uint256 newPrice) public onlyOwner {
@@ -86,4 +87,3 @@ contract RoleControl is Ownable {
       minPayment = newMinPayment;
   }
 }
-
