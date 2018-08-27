@@ -9,7 +9,6 @@ import '../sass/main.scss';
 import BlurContractDesc from '../../../build/contracts/BlueRuble.json';
 
 var Role = {
-   OWNER       : -1,
    EMPTY       : 0,
    ADMIN       : 1,
    TSP         : 2,
@@ -18,14 +17,13 @@ var Role = {
    REQ_CLIENT  : 5
 };
 
-var ReverseRole = {
-   '-1' : Role.OWNER,
-   0    : Role.EMPTY,
-   1    : Role.ADMIN,
-   2    : Role.TSP,
-   3    : Role.CLIENT,
-   4    : Role.REQ_TSP,
-   5    : Role.REQ_CLIENT
+var RoleToText = {
+   0 : "EMPTY",
+   1 : "ADMIN",
+   2 : "TSP",
+   3 : "CLIENT",
+   4 : "REQ_TSP",
+   5 : "REQ_CLIENT"
 };
 
 var Blur;
@@ -74,7 +72,7 @@ async function update_info_panel() {
       $("#current_balance").html("Ваши баллы: " + balance);
    }
 
-   if (role == Role.TSP || role == Role.ADMIN || role == Role.OWNER) {
+   if (role == Role.TSP || role == Role.ADMIN) {
       var price = await price_per_token();
       $("#current_token_price").html("Стоимость: " + price);
    }
@@ -111,17 +109,7 @@ async function balance_of(addr) {
 
 async function check_role(addr) {
    var role = await Blur.methods.checkRole(addr).call();
-   if (role in ReverseRole && role != Role.EMPTY) {
-      role = ReverseRole[role];
-   } else {
-      var owner = await get_owner();
-      if (addr == owner) {
-         role = Role.OWNER;
-      } else {
-         role = Role.EMPTY;
-      }
-   }
-   console.log("Role of addr: " + addr + " role: " + role);
+   console.log("Role of addr: " + addr + " role: " + RoleToText[role]);
    return role;
 }
 
@@ -181,6 +169,7 @@ async function send_tsp_register_request(ogrn) {
 }
 
 async function send_confirm_registration(application_number) {
+   console.log("Confirm request: " + application_number);
    return Blur.methods.applyRegRequest(application_number).send()
       .on('receipt', function (receipt) {
          $("#TxStatus").text("Success");
