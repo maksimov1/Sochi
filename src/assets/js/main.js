@@ -150,6 +150,11 @@ async function send_new_token_price(new_price) {
          $("#TxStatus").text("Success");
          alert("Success");
       })
+      .on('confirmation', function(number, receipt) {
+         if (number == 1) { // MAYME 12?
+            update_info_panel();
+         }
+      })
       .on('error', function (error) {
          $("#TxStatus").text(error);
          alert("Error");
