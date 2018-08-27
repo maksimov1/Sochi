@@ -11,8 +11,9 @@ contract RoleControl is Ownable {
   uint256 public minPayment;
 
   mapping (address => uint256) public phoneByAddress;
-  mapping (uint256 => bool) public isPhoneRegistered;
+  mapping (uint256 => bool)    public isPhoneRegistered;
   mapping (uint256 => address) public requests;
+  mapping (address => uint256) public coalitionByAddress;
   uint256 public numberOfRequests;
 
 
@@ -21,29 +22,28 @@ contract RoleControl is Ownable {
       _;
   }
 
-  function sendRegRequest(uint256 _phone, Role _role) public returns (uint256)
-  {
+  function sendRegRequest(uint256 _phone, Role _role) public returns (uint256) {
       require(roles[msg.sender] == Role.EMPTY);
       require(isPhoneRegistered[_phone] == false);
       require(_role == Role.REQ_TSP || _role == Role.REQ_CLIENT);
 
-      isPhoneRegistered[_phone] = true;
-      roles[msg.sender] = _role;
+      isPhoneRegistered[_phone]  = true;
+      roles[msg.sender]          = _role;
       requests[numberOfRequests] = msg.sender;
       phoneByAddress[msg.sender] = _phone;
+
       numberOfRequests++;
 
       return numberOfRequests - 1;
   }
 
-  function applyRegRequest(uint256 _num, uint256 coalition) onlyAdmin public
-  {
+  function applyRegRequest(uint256 _num, uint256 _coalition) onlyAdmin public {
       address applicant = requests[_num];
       require(roles[applicant] == Role.REQ_TSP || roles[applicant] == Role.REQ_CLIENT);
 
       if (roles[applicant] == Role.REQ_TSP) {
-          roles[applicant] = Role.TSP;
-          coalitionByAddress[applicant] = coalition;
+          roles[applicant]              = Role.TSP;
+          coalitionByAddress[applicant] = _coalition;
       } else {
          roles[applicant] = Role.CLIENT;
       }
@@ -51,8 +51,8 @@ contract RoleControl is Ownable {
 
   //function addAdmin() onlyOwner public
   //Для демонстрации и тестирования onlyOwner убран
-  function addAdmin(address _addr) public
-  {
+  //function addAdmin(address _addr) onlyOwner public
+  function addAdmin(address _addr) public {
      require(roles[_addr] == Role.EMPTY);
      roles[_addr] = Role.ADMIN;
   }
@@ -67,23 +67,23 @@ contract RoleControl is Ownable {
       isPhoneRegistered[phoneByAddress[owner]] = true;
   }
 
-  function checkRole(address client) public view returns (Role) {
-      return roles[client];
+  function checkRole(address _client) public view returns (Role) {
+      return roles[_client];
   }
 
   // В реальности должен быть onlyOwner,
   // но в демонстрационных целях мы разрешаем onlyAdmin
   //function changePrice(uint256 newPrice) public onlyOwner {
-  function changePrice(uint256 newPrice) public onlyAdmin {
-      require(newPrice != 0);
-      pricePerToken = newPrice;
+  function changePrice(uint256 _newPrice) public onlyAdmin {
+      require(_newPrice != 0);
+      pricePerToken = _newPrice;
   }
 
   // В реальности должен быть onlyOwner,
   // но в демонстрационных целях мы разрешаем onlyAdmin
   //function changeMinPayment(uint256 newMinPayment) public onlyOwner {
-  function changeMinPayment(uint256 newMinPayment) public onlyAdmin {
-      require(newMinPayment != 0);
-      minPayment = newMinPayment;
+  function changeMinPayment(uint256 _newMinPayment) public onlyAdmin {
+      require(_newMinPayment != 0);
+      minPayment = _newMinPayment;
   }
 }

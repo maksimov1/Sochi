@@ -7,7 +7,7 @@ import './RoleControl.sol';
 
 contract BlueRuble is ERC20, RoleControl {
   using SafeMath for uint256;
-  string public name = "BLUE RUBLE";
+  string public name   = "BLUE RUBLE";
   string public symbol = "BLUR";
   uint public decimals = 18;
 
@@ -16,8 +16,6 @@ contract BlueRuble is ERC20, RoleControl {
   mapping (address => mapping (address => uint256)) private allowed;
 
   mapping (address => mapping (uint256 => uint256)) public balanceByCoalition;
-
-  mapping (address => uint256) public coalitionByAddress;
 
   uint256 private totalSupply_;
 
@@ -64,17 +62,15 @@ contract BlueRuble is ERC20, RoleControl {
     require(_to != address(0));
 
     require(roles[msg.sender] == Role.TSP || roles[msg.sender] == Role.CLIENT);
-    require(roles[_to] == Role.TSP || roles[_to] == Role.CLIENT);
+    require(roles[_to]        == Role.TSP || roles[_to]        == Role.CLIENT);
     require(roles[msg.sender] != roles[_to]);// !!! токены нельзя переслать между пользователями или торгашами
 
-    if (roles[msg.sender] == Role.TSP)
-    {
+    if (roles[msg.sender] == Role.TSP) {
       balanceByCoalition[_to][coalitionByAddress[msg.sender]] = balanceByCoalition[_to][coalitionByAddress[msg.sender]].add(_value);
-    }
-    else
-    {
+    } else {
       balanceByCoalition[msg.sender][coalitionByAddress[_to]] = balanceByCoalition[msg.sender][coalitionByAddress[_to]].sub(_value);
     }
+
     balances[msg.sender] = balances[msg.sender].sub(_value);
     balances[_to] = balances[_to].add(_value);
     emit Transfer(msg.sender, _to, _value);
@@ -115,7 +111,7 @@ contract BlueRuble is ERC20, RoleControl {
     require(_to != address(0));
 
     require(roles[_from] == Role.TSP || roles[_from] == Role.CLIENT);
-    require(roles[_to] == Role.TSP || roles[_to] == Role.CLIENT);
+    require(roles[_to]   == Role.TSP || roles[_to]   == Role.CLIENT);
     require(roles[_from] != roles[_to]);// !!! токены нельзя переслать между пользователями или торгашами
 
     balances[_from] = balances[_from].sub(_value);
@@ -179,10 +175,10 @@ contract BlueRuble is ERC20, RoleControl {
   }
 
   function () public payable {
-      require(roles[msg.sender] == Role.TSP);
-      _mint(msg.sender, (msg.value).div(pricePerToken));
-      owner.transfer(msg.value);
+    require(roles[msg.sender] == Role.TSP);
 
+    _mint(msg.sender, (msg.value).div(pricePerToken));
+    owner.transfer(msg.value);
   }
 
   function mint(
