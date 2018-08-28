@@ -610,12 +610,12 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
          }
       });
 
-      $("#ClientSendTokensTspButton").click(function () {
-         var address = $("#TspAddress").val();
-         var count   = $("#TspCount").val();
+      $("#ClientSendTokensButton").click(function () {
+         var address = $("#TspClientAddress").val();
+         var count   = $("#TokenCount").val();
          if (
-             check_field(address, "#TspAddress", "Введите адрес ТСП", "Пожалуйста, Введите адрес ТСП") &&
-             check_field(count, "#TspCount", "Введите количество баллов", "Пожалуйста, Введите количество баллов")
+             check_field(address, "#TspClientAddress", "Введите адрес ТСП/Клиента", "Пожалуйста, Введите адрес ТСП/Клиента") &&
+             check_field(count, "#TokenCount", "Введите количество баллов", "Пожалуйста, Введите количество баллов")
          ) {
             console.log("Client -> Tsp: " + address + " Count: " + count);
             balance_of(Account);
