@@ -4,6 +4,8 @@ import './../vendor/jquery.scrollex.min.js';
 import './../vendor/jquery.scrolly.min.js';
 import './util.js';
 
+import QRious from 'qrious';
+
 import '../sass/main.scss';
 
 import BlurContractDesc from '../../../build/contracts/BlueRuble.json';
@@ -76,6 +78,10 @@ async function update_info_panel() {
       var price = await price_per_token();
       $("#current_token_price").html("Стоимость: " + price);
    }
+
+   if ($('#qrious').length) {
+      window.qr.value = cur_account;
+   }
 }
 
 async function init_contract() {
@@ -88,6 +94,16 @@ async function init_contract() {
    setInterval(function() {
       update_account();
    }, 100);
+
+
+   if ($('#qrious').length) {
+      window.qr = new QRious({
+         element: document.getElementById('qrious'),
+         level: 'Q',
+         size: 250,
+         value: Account
+      });
+   }
 
    update_info_panel();
 

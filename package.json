@@ -32,5 +32,8 @@
     "webpack": "^4.17.1",
     "webpack-cli": "^3.0.6",
     "webpack-dev-server": "^3.1.4"
+  },
+  "dependencies": {
+    "qrious": "^4.0.2"
   }
 }

@@ -56,36 +56,41 @@
 
         <!-- Main -->
         <div id="main" class="alt">
-
             <!-- One -->
-            <section id="one">
-                <div class="inner">
-                    <header class="major">
-                        <h1>Торгово-сервисному предприятию</h1>
-                    </header>
-                    <p>Для перевода баллов клиенту-покупателю:
-                        <br>1. Введите eth адрес клиента-покупателя
-                        <br>2. Введите количество баллов
-                        <br>3. Нажмите
-                        <b>«Перевести баллы»</b>
-                    </p>
-                    <input type="text" name="ClientAddress" id="ClientAddress" value="" placeholder="Введите адрес Клиента" size="45">
-                    <br>
-                    <input type="text" name="ClientCount" id="ClientCount" value="" placeholder="Введите количество баллов" size="45">
-                    <br>
-                    <button id="TspSendTokensClientButton">Перевести баллы</button>
-                    <hr>
-                    <p>Для покупки токенов:
-                        <br>1. Введите количество баллов
-                        <br>2. Нажмите
-                        <b>«Купить токены»</b>
-                    </p>
-                    <input type="text" name="TokensToBuy" id="TokensToBuy" value="" placeholder="Введите количество токенов" size="45">
-                    <br>
-                    <button id="TspBuyTokensButton">Купить токены</button>
-                </div>
-            </section>
+            <div class="inner">
+               <header class="major">
+                  <h1>Торгово-сервисному предприятию</h1>
+               </header>
 
+               <section id="one">
+                  <div style="display: block; margin: 0 auto; text-align: center;">
+                     <img id="qrious">
+                  </div>
+               </section>
+
+               <section id="two">
+                  <p><h3>Для перевода баллов клиенту-покупателю:</h3>
+                  <br>1. Введите eth адрес клиента-покупателя
+                  <br>2. Введите количество баллов
+                  <br>3. Нажмите
+                  <b>«Перевести баллы»</b>
+                  </p>
+                  <input type="text" name="ClientAddress" id="ClientAddress" value="" placeholder="Введите адрес Клиента" size="45">
+                  <br>
+                  <input type="text" name="ClientCount" id="ClientCount" value="" placeholder="Введите количество баллов" size="45">
+                  <br>
+                  <button id="TspSendTokensClientButton">Перевести баллы</button>
+                  <hr>
+                  <p><h3>Для покупки токенов:</h3>
+                  <br>1. Введите количество баллов
+                  <br>2. Нажмите
+                  <b>«Купить токены»</b>
+                  </p>
+                  <input type="text" name="TokensToBuy" id="TokensToBuy" value="" placeholder="Введите количество токенов" size="45">
+                  <br>
+                  <button id="TspBuyTokensButton">Купить токены</button>
+               </section>
+            </div>
         </div>
 
         <!-- Footer -->
