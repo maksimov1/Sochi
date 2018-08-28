@@ -615,8 +615,9 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
          // Use the Mist/wallet provider.
          window.web3 = new Web3(web3.currentProvider);
       } else {
-         alert("Пожалуйста, установите MetaMask или используйте Toshi на мобильном телефоне.");
+         alert("Пожалуйста, установите Cipher Browser https://www.cipherbrowser.com/ на мобильный телефон или используйте MetaMask.");
          window.web3 = new Web3.providers.HttpProvider('http://localhost:8545');
+         return;
       }
       web3 = window.web3;
       console.log("Web3 version: " + web3.version);
