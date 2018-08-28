@@ -168,6 +168,32 @@ async function min_payment() {
    return min;
 }
 
+function status_receipt(label) {
+   return function(receipt) { label.text("Статус: Началась обработка") };
+}
+
+function status_confirmation(label) {
+   return function(number, receipt) {
+      if (number == 3) {
+         update_info_panel();
+      }
+      if (number <= 12) {
+         label.text("Статус: Получено подтверждение (" + number + ")");
+      } else if (number == 13) {
+         label.text("Статус: Операция успешно завершена");
+      } else if (number == 14) {
+         label.text('');
+      }
+   }
+}
+
+function status_error(label) {
+   return function(error) {
+      label.text("Ошибка: " + error.message);
+   }
+}
+
+
 async function send_test_add_admin(addr) {
    return Blur.methods.testAddAdmin(addr).send()
       .on('receipt', function (receipt) {
@@ -193,21 +219,11 @@ async function send_client_register_request(phone) {
 }
 
 async function send_new_token_price(new_price) {
-   // need to update interface
+   var label = $("#PriceChangeTxStatus");
    return Blur.methods.changePrice(new_price).send()
-      .on('receipt', function (receipt) {
-         $("#TxStatus").text("Success");
-         alert("Success");
-      })
-      .on('confirmation', function(number, receipt) {
-         if (number == 1) { // MAYME 12?
-            update_info_panel();
-         }
-      })
-      .on('error', function (error) {
-         $("#TxStatus").text(error);
-         alert("Error");
-      });
+      .on('receipt', status_receipt(label))
+      .on('confirmation', status_confirmation(label))
+      .on('error', status_error(label));
 }
 
 async function send_tsp_register_request(name) {
