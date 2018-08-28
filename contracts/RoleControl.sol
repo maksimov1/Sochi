@@ -6,67 +6,84 @@ contract RoleControl is Ownable {
   //роли: никто, админ, торгаш, покупатель + запросы на роли от пользователей
   enum Role {EMPTY, ADMIN, TSP, CLIENT, REQ_TSP, REQ_CLIENT}
   mapping (address => Role) public roles;
-   
+
   uint256 public pricePerToken;
   uint256 public minPayment;
-  
-  mapping (address => uint256) public phoneByAddress;
-  mapping (uint256 => bool) public isPhoneRegistered;
+
   mapping (uint256 => address) public requests;
+
+  mapping (uint256 => bool)    private isPhoneRegistered;
+  mapping (address => uint256) public phoneByAddress;
+
+  mapping (string => bool)    private isTSPNameRegistered;
+  mapping (address => string) public tspNameByAddress;
+
+  mapping (address => uint256) public coalitionByAddress;
   uint256 public numberOfRequests;
-  
+
 
   modifier onlyAdmin() {
-      require(roles[msg.sender] == Role.ADMIN);
+      require(roles[msg.sender] == Role.ADMIN, "Only admin role can perform this action.");
       _;
   }
 
-  function sendRegRequest(uint256 _phone, Role _role) public returns (uint256)
-  {
-      require(roles[msg.sender] == Role.EMPTY);
-      require(isPhoneRegistered[_phone] == false);
-      require(_role == Role.REQ_TSP || _role == Role.REQ_CLIENT);
+  function sendRegTSPRequest(string _name) public returns (uint256) {
+      require(roles[msg.sender] == Role.EMPTY, "You are already registered in the system.");
+      require(isTSPNameRegistered[_name] == false);
 
-      isPhoneRegistered[_phone] = true;
-      roles[msg.sender] = _role;
-      requests[numberOfRequests] = msg.sender;
-      phoneByAddress[msg.sender] = _phone;
+      roles[msg.sender]            = Role.REQ_TSP;
+      isTSPNameRegistered[_name]   = true;
+      requests[numberOfRequests]   = msg.sender;
+      tspNameByAddress[msg.sender] = _name;
+
       numberOfRequests++;
 
       return numberOfRequests - 1;
-  } 
+  }
 
-  function applyRegRequest(uint256 _num) onlyAdmin public
-  {
+  function sendRegClientRequest(uint256 _phone) public returns (uint256) {
+      require(roles[msg.sender] == Role.EMPTY, "You are already registered in the system.");
+      require(isPhoneRegistered[_phone] == false);
+
+      isPhoneRegistered[_phone]  = true;
+      roles[msg.sender]          = Role.REQ_CLIENT;
+      requests[numberOfRequests] = msg.sender;
+      phoneByAddress[msg.sender] = _phone;
+
+      numberOfRequests++;
+
+      return numberOfRequests - 1;
+  }
+
+  function applyRegRequest(uint256 _num, uint256 _coalition) onlyAdmin public {
       address applicant = requests[_num];
-      require(roles[applicant] == Role.REQ_TSP || roles[applicant] == Role.REQ_CLIENT);
+      require(roles[applicant] == Role.REQ_TSP || roles[applicant] == Role.REQ_CLIENT, "Can''t register this address.");
 
       if (roles[applicant] == Role.REQ_TSP) {
-          roles[applicant] = Role.TSP;
+          roles[applicant]              = Role.TSP;
+          coalitionByAddress[applicant] = _coalition;
       } else {
          roles[applicant] = Role.CLIENT;
       }
-
-      numberOfRequests--;
   }
 
-  function rejectRegRequest(uint256 _num) onlyAdmin public
-  {
-      address applicant = requests[_num];
-      require(roles[applicant] == Role.REQ_TSP || roles[applicant] == Role.REQ_CLIENT);
+  function addAdmin(address _addr) onlyOwner public {
+     require(roles[_addr] == Role.EMPTY, "This address is already registered in the system with a different role.");
 
-      roles[applicant] = Role.EMPTY;
-      isPhoneRegistered[phoneByAddress[applicant]] = false;
-
-      numberOfRequests--;
+     roles[_addr]          = Role.ADMIN;
+     phoneByAddress[_addr] = 74959137474;
   }
 
-  //function addAdmin() onlyOwner public
-  //Для демонстрации и тестирования onlyOwner убран
-  function addAdmin(address _addr) public
-  {
-     require(roles[_addr] == Role.EMPTY);
-     roles[_addr] = Role.ADMIN;
+  // Этой функции в реальной системе быть не должно
+  // Она служит демонстрационным целям
+  // В реальности администраторов может назначать
+  // только владелец контракта, так как это делается
+  // в функции выше: addAdmin.
+  function testAddAdmin(address _addr) public {
+     require(roles[_addr] == Role.EMPTY, "This address is already registered in the system with a different role.");
+
+     roles[_addr]          = Role.ADMIN;
+     phoneByAddress[_addr] = 74959137474;
   }
 
   constructor() public {
@@ -78,25 +95,24 @@ contract RoleControl is Ownable {
       phoneByAddress[owner]                    = 74959137474;
       isPhoneRegistered[phoneByAddress[owner]] = true;
   }
-  
-  function checkRole(address client) public view returns (Role) {
-      return roles[client];
+
+  function checkRole(address _client) public view returns (Role) {
+      return roles[_client];
   }
-  
+
   // В реальности должен быть onlyOwner,
   // но в демонстрационных целях мы разрешаем onlyAdmin
   //function changePrice(uint256 newPrice) public onlyOwner {
-  function changePrice(uint256 newPrice) public onlyAdmin {
-      require(newPrice != 0);
-      pricePerToken = newPrice;
+  function changePrice(uint256 _newPrice) public onlyAdmin {
+      require(_newPrice != 0, "The price can't be zero.");
+      pricePerToken = _newPrice;
   }
 
   // В реальности должен быть onlyOwner,
   // но в демонстрационных целях мы разрешаем onlyAdmin
   //function changeMinPayment(uint256 newMinPayment) public onlyOwner {
-  function changeMinPayment(uint256 newMinPayment) public onlyAdmin {
-      require(newMinPayment != 0);
-      minPayment = newMinPayment;
+  function changeMinPayment(uint256 _newMinPayment) public onlyAdmin {
+      require(_newMinPayment != 0, "The mininal payment can't be zero.");
+      minPayment = _newMinPayment;
   }
 }
-

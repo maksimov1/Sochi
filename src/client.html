@@ -3,7 +3,7 @@
 <html>
 
 <head>
-    <title>Так - клиенту</title>
+    <title>BLUR - клиенту</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="./main.css" />
@@ -18,7 +18,7 @@
         <!-- Header -->
         <header id="header">
             <a href="index.html" class="logo">
-                <strong>Так</strong>
+                <strong>BLUR</strong>
                 <span>мечты сбываются</span>
             </a>
             <div class="token_info">
@@ -57,24 +57,31 @@
         <div id="main" class="alt">
 
             <!-- One -->
-            <section id="one">
-                <div class="inner">
-                    <header class="major">
-                        <h1>Клиенту-покупателю</h1>
-                    </header>
-                    <p><h3>Для перевода баллов ТСП:</h3>
-                        <br>1. Введите eth адрес ТСП
+            <div class="inner">
+               <header class="major">
+                  <h1>Клиенту-покупателю</h1>
+               </header>
+               <section id="one">
+                  <div style="display: block; margin: 0 auto; text-align: center;">
+                     <img id="qrious">
+                  </div>
+               </section>
+               <section id="two">
+                    <p><h3>Для перевода баллов ТСП или другому клиенту:</h3>
+                        <br>1. Введите eth адрес ТСП/Клиента
                         <br>2. Введите количество баллов
                         <br>3. Нажмите
                         <b>«Перевести баллы»</b>
                     </p>
-                    <input type="text" name="TspAddress" id="TspAddress" value="" placeholder="Введите адрес ТСП" size="45">
+                    <input type="text" name="TspClientAddress" id="TspClientAddress" value="" placeholder="Введите адрес ТСП/Клиента" size="45">
                     <br>
-                    <input type="text" name="TspCount" id="TspCount" value="" placeholder="Введите количество баллов" size="45">
+                    <input type="text" name="TokenCount" id="TokenCount" value="" placeholder="Введите количество баллов" size="45">
+                    <div id="SendTokensTxStatus"></div>
                     <br>
-                    <button id="ClientSendTokensTspButton">Перевести баллы</button>
-                </div>
-            </section>
+                    <button id="ClientSendTokensButton">Перевести баллы</button>
+                    <button id="ClientScanQRCodeButton" disabled>Сканировать QR код</button>
+               </section>
+            </div>
 
         </div>
 

@@ -4,26 +4,28 @@ import './../vendor/jquery.scrollex.min.js';
 import './../vendor/jquery.scrolly.min.js';
 import './util.js';
 
+import QRious from 'qrious';
+
 import '../sass/main.scss';
 
 import BlurContractDesc from '../../../build/contracts/BlueRuble.json';
 
 var Role = {
-   BANK        : -1,
    EMPTY       : 0,
-   TSP         : 1,
-   CLIENT      : 2,
-   REQ_TSP     : 3,
-   REQ_CLIENT  : 4
+   ADMIN       : 1,
+   TSP         : 2,
+   CLIENT      : 3,
+   REQ_TSP     : 4,
+   REQ_CLIENT  : 5
 };
 
-var ReverseRole = {
-   '-1' : Role.BANK,
-   0    : Role.EMPTY,
-   1    : Role.TSP,
-   2    : Role.CLIENT,
-   3    : Role.REQ_TSP,
-   4    : Role.REQ_CLIENT
+var RoleToText = {
+   0 : "EMPTY",
+   1 : "ADMIN",
+   2 : "TSP",
+   3 : "CLIENT",
+   4 : "REQ_TSP",
+   5 : "REQ_CLIENT"
 };
 
 var Blur;
@@ -72,9 +74,42 @@ async function update_info_panel() {
       $("#current_balance").html("Ваши баллы: " + balance);
    }
 
-   if (role == Role.TSP || role == Role.BANK) {
+   if (role == Role.TSP || role == Role.ADMIN) {
       var price = await price_per_token();
       $("#current_token_price").html("Стоимость: " + price);
+   }
+
+   if ($('#qrious').length) {
+      window.qr.value = cur_account;
+   }
+}
+
+function is_ciper() {
+   return !!window.__CIPHER__;
+}
+
+function can_scan_qr_code() {
+   return !!(
+      window.web3 &&
+      window.web3.currentProvider &&
+      window.web3.currentProvider.scanQRCode
+   );
+}
+
+function init_page() {
+
+   if (can_scan_qr_code()) {
+      $('#ClientScanQRCodeButton').prop("disabled", false);
+      $('#TspScanQRCodeButton').prop("disabled", false);
+   }
+
+   if ($('#qrious').length) {
+      window.qr = new QRious({
+         element: document.getElementById('qrious'),
+         level: 'Q',
+         size: 250,
+         value: Account
+      });
    }
 }
 
@@ -88,6 +123,8 @@ async function init_contract() {
    setInterval(function() {
       update_account();
    }, 100);
+
+   init_page();
 
    update_info_panel();
 
@@ -109,17 +146,7 @@ async function balance_of(addr) {
 
 async function check_role(addr) {
    var role = await Blur.methods.checkRole(addr).call();
-   if (role in ReverseRole && role != Role.EMPTY) {
-      role = ReverseRole[role];
-   } else {
-      var owner = await get_owner();
-      if (addr == owner) {
-         role = Role.BANK;
-      } else {
-         role = Role.EMPTY;
-      }
-   }
-   console.log("Role of addr: " + addr + " role: " + role);
+   console.log("Role of addr: " + addr + " role: " + RoleToText[role]);
    return role;
 }
 
@@ -141,83 +168,86 @@ async function min_payment() {
    return min;
 }
 
-async function send_client_register_request(phone) {
-   return Blur.methods.sendRegRequest(phone, Role.REQ_CLIENT).send()
-      .on('receipt', function (receipt) {
-         $("#TxStatus").text("Success");
-         alert("Success");
-      })
-      .on('error', function (error) {
-         $("#TxStatus").text(error);
-         alert("Error");
-      });
+function status_receipt(label) {
+   return function(receipt) { label.text("Статус: Началась обработка") };
 }
 
-async function send_new_token_price(new_price) {
-   // need to update interface
+function status_confirmation(label) {
+   return function(number, receipt) {
+      if (number == 3) {
+         update_info_panel();
+      }
+      if (number <= 12) {
+         label.text("Статус: Получено подтверждение (" + number + ")");
+      } else if (number == 13) {
+         label.text("Статус: Операция успешно завершена");
+      } else if (number == 14) {
+         label.text('');
+      }
+   }
+}
+
+function status_error(label) {
+   return function(error) {
+      console.log(error);
+      label.text("Ошибка: " + error.message);
+   }
+}
+
+
+async function send_test_add_admin(addr, label) {
+   return Blur.methods.testAddAdmin(addr).send()
+      .on('receipt', status_receipt(label))
+      .on('confirmation', status_confirmation(label))
+      .on('error', status_error(label));
+}
+
+async function send_client_register_request(phone, label) {
+   return Blur.methods.sendRegClientRequest(phone).send()
+      .on('receipt', status_receipt(label))
+      .on('confirmation', status_confirmation(label))
+      .on('error', status_error(label));
+}
+
+async function send_tsp_register_request(name, label) {
+   return Blur.methods.sendRegTSPRequest(name).send()
+      .on('receipt', status_receipt(label))
+      .on('confirmation', status_confirmation(label))
+      .on('error', status_error(label));
+}
+
+async function send_confirm_registration(application_number, coalition_number, label) {
+   console.log("Confirm request: " + application_number);
+   return Blur.methods.applyRegRequest(application_number, coalition_number).send()
+      .on('receipt', status_receipt(label))
+      .on('confirmation', status_confirmation(label))
+      .on('error', status_error(label));
+}
+
+async function send_new_token_price(new_price, label) {
    return Blur.methods.changePrice(new_price).send()
-      .on('receipt', function (receipt) {
-         $("#TxStatus").text("Success");
-         alert("Success");
-      })
-      .on('error', function (error) {
-         $("#TxStatus").text(error);
-         alert("Error");
-      });
+      .on('receipt', status_receipt(label))
+      .on('confirmation', status_confirmation(label))
+      .on('error', status_error(label));
 }
 
-async function send_tsp_register_request(ogrn) {
-   return Blur.methods.sendRegRequest(ogrn, Role.REQ_TSP).send()
-      .on('receipt', function (receipt) {
-         $("#TxStatus").text("Success");
-         alert("Success");
-      })
-      .on('error', function (error) {
-         $("#TxStatus").text(error);
-         alert("Error");
-      });
-}
-
-async function send_confirm_registration(application_number) {
-   return Blur.methods.applyRegRequest(application_number).send()
-      .on('receipt', function (receipt) {
-         $("#TxStatus").text("Success");
-         alert("Success");
-      })
-      .on('error', function (error) {
-         $("#TxStatus").text(error);
-         alert("Error");
-      });
-}
-
-async function send_transfer(to_addr, value) {
+async function send_transfer(to_addr, value, label) {
    return Blur.methods.transfer(to_addr, value).send()
-      .on('receipt', function (receipt) {
-         $("#TxStatus").text("Success");
-         alert("Success");
-      })
-      .on('error', function (error) {
-         $("#TxStatus").text(error);
-         alert("Error");
-      });
+      .on('receipt', status_receipt(label))
+      .on('confirmation', status_confirmation(label))
+      .on('error', status_error(label));
 }
 
-async function send_buy_tokens(num) {
+async function send_buy_tokens(num, label) {
    var price = await price_per_token();
    var total_price = num * price;
 
    console.log("Tsp -> Bank: wants to buy " + num + " tokens by price " + price + " Total: " + total_price);
 
-   //value: web3.utils.toWei(total_price.toString(), "ether")
-   return web3.eth.sendTransaction({from: Account, to: Blur.options.address, value: web3.utils.toWei(total_price.toString(), "ether")})
-      .on('receipt', function (receipt) {
-         $("#TxStatus").text("Success");
-         alert("Success");
-      })
-      .on('error', function (error) {
-         $("#TxStatus").text(error);
-         alert("Error");
-      });
+   return web3.eth.sendTransaction({from: Account, to: Blur.options.address, value: total_price.toString()})
+      .on('receipt', status_receipt(label))
+      .on('confirmation', status_confirmation(label))
+      .on('error', status_error(label));
 }
 
 
@@ -570,8 +600,9 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
          // Use the Mist/wallet provider.
          window.web3 = new Web3(web3.currentProvider);
       } else {
-         alert("Пожалуйста, установите MetaMask или используйте Toshi на мобильном телефоне.");
+         alert("Пожалуйста, установите Cipher Browser https://www.cipherbrowser.com/ на мобильный телефон или используйте MetaMask.");
          window.web3 = new Web3.providers.HttpProvider('http://localhost:8545');
+         return;
       }
       web3 = window.web3;
       console.log("Web3 version: " + web3.version);
@@ -598,21 +629,33 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
              check_field(new_price, "#NewTokenPrice", "Введите новую цену токена", "Пожалуйста, Введите новую цену токена")
          ) {
             console.log("New Token Price: " + new_price);
-            send_new_token_price(new_price);
+            send_new_token_price(new_price, $("#PriceChangeTxStatus"));
          }
       });
 
-      $("#ClientSendTokensTspButton").click(function () {
-         var address = $("#TspAddress").val();
-         var count   = $("#TspCount").val();
+      $("#ClientSendTokensButton").click(function () {
+         var address = $("#TspClientAddress").val();
+         var count   = $("#TokenCount").val();
          if (
-             check_field(address, "#TspAddress", "Введите адрес ТСП", "Пожалуйста, Введите адрес ТСП") &&
-             check_field(count, "#TspCount", "Введите количество баллов", "Пожалуйста, Введите количество баллов")
+             check_field(address, "#TspClientAddress", "Введите адрес ТСП/Клиента", "Пожалуйста, Введите адрес ТСП/Клиента") &&
+             check_field(count, "#TokenCount", "Введите количество баллов", "Пожалуйста, Введите количество баллов")
          ) {
             console.log("Client -> Tsp: " + address + " Count: " + count);
             balance_of(Account);
-            send_transfer(address, count);
+            send_transfer(address, count, $("#SendTokensTxStatus"));
          }
+      });
+
+      $("#ClientScanQRCodeButton").click(function () {
+         web3.currentProvider
+            .scanQRCode()
+            .then(data => {
+               console.log('QR Scanned:', data)
+               $("#TspClientAddress").val(data);
+            })
+            .catch(err => {
+               console.log('Error:', err)
+            });
       });
 
       $("#TspSendTokensClientButton").click(function () {
@@ -624,38 +667,56 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
          ) {
             console.log("Tsp -> Client: " + address + " Count: " + count);
             balance_of(Account);
-            send_transfer(address, count);
+            send_transfer(address, count, $("#SendTokensTxStatus"));
          }
+      });
+
+      $("#TspScanQRCodeButton").click(function () {
+         web3.currentProvider
+            .scanQRCode()
+            .then(data => {
+               console.log('QR Scanned:', data)
+               $("#ClientAddress").val(data);
+            })
+            .catch(err => {
+               console.log('Error:', err)
+            });
       });
 
       $("#TspBuyTokensButton").click(function () {
          var number_of_tokens = $("#TokensToBuy").val().replace(/[^0-9]/g, '');
          if (check_field(number_of_tokens, "#TokensToBuy", "Введите количество токенов", "Пожалуйста, Введите количество токенов")) {
-            send_buy_tokens(number_of_tokens);
+            send_buy_tokens(number_of_tokens, $("#BuyTokensTxStatus"));
          }
       });
 
       // Registration
       $("#RegisterTspButton").click(function () {
-         var ogrn = $("#ogrn").val().replace(/[^0-9]/g, '');
-         if (check_field(ogrn, "#ogrn", "Введите номер ОГРН", "Пожалуйста, Введите номер ОГРН")) {
-            send_tsp_register_request(ogrn);
+         var company_name = $("#company_name").val();
+         if (check_field(company_name, "#company_name", "Введите номер название компании", "Пожалуйста, Введите название комании")) {
+            send_tsp_register_request(company_name, $("#RegisterTspTxStatus"));
          }
       });
 
       $("#RegisterClientButton").click(function() {
          var phone = $("#phone").val().replace(/[^0-9]/g, '');
          if (check_field(phone, "#phone", "Введине номер телефона", "Пожалуйста, Введите номер телефона")) {
-            send_client_register_request(phone);
+            send_client_register_request(phone, $("#RegisterClientTxStatus"));
          }
       });
 
       // Confirm Registration
       $("#BankConfirmRegistrationButton").click(function() {
          var application_number = $("#ApplicationNumber").val().replace(/[^0-9]/g, '');
+         var coalition_number = 0;
          if (check_field(application_number, "#ApplicationNumber", "Введине номер заявки", "Пожалуйста, Введите номер заявки")) {
-            send_confirm_registration(application_number - 1);
+            send_confirm_registration(application_number - 1, coalition_number, $("#ConfirmRegistrationTxStatus"));
          }
+      });
+
+      // Демонстрационная функциональность системы
+      $("#MakeMeBad").click(function() {
+         send_test_add_admin(Account, $("#TestAddAdminTxStatus"));
       });
    });
 })(jQuery);

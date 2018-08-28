@@ -3,7 +3,7 @@
 <html>
 
 <head>
-	<title>Так - клиенту</title>
+	<title>BLUR - клиенту</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<link rel="stylesheet" href="./main.css" />
@@ -18,7 +18,7 @@
 		<!-- Header -->
 		<header id="header">
 			<a href="index.html" class="logo">
-				<strong>Так</strong>
+				<strong>BLUR</strong>
 				<span>мечты сбываются</span>
 			</a>
 			<nav>
@@ -45,8 +45,8 @@
 					<a href="registration.html">Регистрация</a>
 				</li>
 				<li>
-						<a href="about_us.html">О разработчиках</a>
-					</li>
+					<a href="about_us.html">О разработчиках</a>
+				</li>
 			</ul>
 		</nav>
 
@@ -61,21 +61,23 @@
 					</header>
 					<p>
 						<h4>Подключение в качестве клиента-покупателя</h4>
-						1. Введите свой номер телефона
+						<br> 1. Введите свой номер телефона
 						<br> 2. Нажмите
 						<b>«Зарегистрироваться»</b>
 					</p>
 					<input type="tel" name="phone" id="phone" placeholder="Введите номер телефона" size="45">
+               <div id="RegisterClientTxStatus"></div>
 					<br>
 					<button id="RegisterClientButton">Зарегистрироваться</button>
 					<hr>
 					<p>
 						<h4>Подключение в качестве торгово-сервисного предприятия</h4>
-						 1. Введите ОГРН или ИНН
+						<br> 1. Введите название компании
 						<br> 2. Нажмите
 						<b>«Зарегистрироваться»</b>
 					</p>
-					<input type="text" name="ogrn" id="ogrn" placeholder="Введите номер ОГРН" size="45">
+					<input type="text" name="company_name" id="company_name" placeholder="Введите название компании" size="45">
+               <div id="RegisterTspTxStatus"></div>
 					<br>
 					<button id="RegisterTspButton">Зарегистрироваться</button>
 			</section>
