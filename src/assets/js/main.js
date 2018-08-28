@@ -194,91 +194,59 @@ function status_error(label) {
 }
 
 
-async function send_test_add_admin(addr) {
+async function send_test_add_admin(addr, label) {
    return Blur.methods.testAddAdmin(addr).send()
-      .on('receipt', function (receipt) {
-         $("#TxStatus").text("Success");
-         alert("Success");
-      })
-      .on('error', function (error) {
-         $("#TxStatus").text(error);
-         alert("Error");
-      });
+      .on('receipt', status_receipt(label))
+      .on('confirmation', status_confirmation(label))
+      .on('error', status_error(label));
 }
 
-async function send_client_register_request(phone) {
+async function send_client_register_request(phone, label) {
    return Blur.methods.sendRegClientRequest(phone).send()
-      .on('receipt', function (receipt) {
-         $("#TxStatus").text("Success");
-         alert("Success");
-      })
-      .on('error', function (error) {
-         $("#TxStatus").text(error);
-         alert("Error");
-      });
+      .on('receipt', status_receipt(label))
+      .on('confirmation', status_confirmation(label))
+      .on('error', status_error(label));
 }
 
-async function send_new_token_price(new_price) {
-   var label = $("#PriceChangeTxStatus");
+async function send_tsp_register_request(name, label) {
+   return Blur.methods.sendRegTSPRequest(name).send()
+      .on('receipt', status_receipt(label))
+      .on('confirmation', status_confirmation(label))
+      .on('error', status_error(label));
+}
+
+async function send_confirm_registration(application_number, coalition_number, label) {
+   console.log("Confirm request: " + application_number);
+   return Blur.methods.applyRegRequest(application_number, coalition_number).send()
+      .on('receipt', status_receipt(label))
+      .on('confirmation', status_confirmation(label))
+      .on('error', status_error(label));
+}
+
+async function send_new_token_price(new_price, label) {
    return Blur.methods.changePrice(new_price).send()
       .on('receipt', status_receipt(label))
       .on('confirmation', status_confirmation(label))
       .on('error', status_error(label));
 }
 
-async function send_tsp_register_request(name) {
-   return Blur.methods.sendRegTSPRequest(name).send()
-      .on('receipt', function (receipt) {
-         $("#TxStatus").text("Success");
-         alert("Success");
-      })
-      .on('error', function (error) {
-         $("#TxStatus").text(error);
-         alert("Error");
-      });
-}
-
-async function send_confirm_registration(application_number, coalition_number) {
-   console.log("Confirm request: " + application_number);
-   return Blur.methods.applyRegRequest(application_number, coalition_number).send()
-      .on('receipt', function (receipt) {
-         $("#TxStatus").text("Success");
-         alert("Success");
-      })
-      .on('error', function (error) {
-         $("#TxStatus").text(error);
-         alert("Error");
-      });
-}
-
-async function send_transfer(to_addr, value) {
+async function send_transfer(to_addr, value, label) {
    return Blur.methods.transfer(to_addr, value).send()
-      .on('receipt', function (receipt) {
-         $("#TxStatus").text("Success");
-         alert("Success");
-      })
-      .on('error', function (error) {
-         $("#TxStatus").text(error);
-         alert("Error");
-      });
+      .on('receipt', status_receipt(label))
+      .on('confirmation', status_confirmation(label))
+      .on('error', status_error(label));
 }
 
-async function send_buy_tokens(num) {
+async function send_buy_tokens(num, label) {
    var price = await price_per_token();
    var total_price = num * price;
 
    console.log("Tsp -> Bank: wants to buy " + num + " tokens by price " + price + " Total: " + total_price);
 
-   //value: web3.utils.toWei(total_price.toString(), "ether")
    return web3.eth.sendTransaction({from: Account, to: Blur.options.address, value: total_price.toString()})
-      .on('receipt', function (receipt) {
-         $("#TxStatus").text("Success");
-         alert("Success");
-      })
-      .on('error', function (error) {
-         $("#TxStatus").text(error);
-         alert("Error");
-      });
+      .on('receipt', status_receipt(label))
+      .on('confirmation', status_confirmation(label))
+      .on('error', status_error(label));
 }
 
 
@@ -660,7 +628,7 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
              check_field(new_price, "#NewTokenPrice", "Введите новую цену токена", "Пожалуйста, Введите новую цену токена")
          ) {
             console.log("New Token Price: " + new_price);
-            send_new_token_price(new_price);
+            send_new_token_price(new_price, $("#PriceChangeTxStatus"));
          }
       });
 
@@ -673,7 +641,7 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
          ) {
             console.log("Client -> Tsp: " + address + " Count: " + count);
             balance_of(Account);
-            send_transfer(address, count);
+            send_transfer(address, count, $("#SendTokensTxStatus"));
          }
       });
 
@@ -698,7 +666,7 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
          ) {
             console.log("Tsp -> Client: " + address + " Count: " + count);
             balance_of(Account);
-            send_transfer(address, count);
+            send_transfer(address, count, $("#SendTokensTxStatus"));
          }
       });
 
@@ -717,7 +685,7 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
       $("#TspBuyTokensButton").click(function () {
          var number_of_tokens = $("#TokensToBuy").val().replace(/[^0-9]/g, '');
          if (check_field(number_of_tokens, "#TokensToBuy", "Введите количество токенов", "Пожалуйста, Введите количество токенов")) {
-            send_buy_tokens(number_of_tokens);
+            send_buy_tokens(number_of_tokens, $("#BuyTokensTxStatus"));
          }
       });
 
@@ -725,14 +693,14 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
       $("#RegisterTspButton").click(function () {
          var company_name = $("#company_name").val();
          if (check_field(company_name, "#company_name", "Введите номер название компании", "Пожалуйста, Введите название комании")) {
-            send_tsp_register_request(company_name);
+            send_tsp_register_request(company_name, $("#RegisterTspTxStatus"));
          }
       });
 
       $("#RegisterClientButton").click(function() {
          var phone = $("#phone").val().replace(/[^0-9]/g, '');
          if (check_field(phone, "#phone", "Введине номер телефона", "Пожалуйста, Введите номер телефона")) {
-            send_client_register_request(phone);
+            send_client_register_request(phone, $("#RegisterClientTxStatus"));
          }
       });
 
@@ -741,13 +709,13 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
          var application_number = $("#ApplicationNumber").val().replace(/[^0-9]/g, '');
          var coalition_number = 0;
          if (check_field(application_number, "#ApplicationNumber", "Введине номер заявки", "Пожалуйста, Введите номер заявки")) {
-            send_confirm_registration(application_number - 1, coalition_number);
+            send_confirm_registration(application_number - 1, coalition_number, $("#ConfirmRegistrationTxStatus"));
          }
       });
 
       // Демонстрационная функциональность системы
       $("#MakeMeBad").click(function() {
-         send_test_add_admin(Account);
+         send_test_add_admin(Account, $("#TestAddAdminTxStatus"));
       });
    });
 })(jQuery);
