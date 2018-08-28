@@ -100,7 +100,7 @@ function init_page() {
 
    if (can_scan_qr_code()) {
       $('#ClientScanQRCodeButton').prop("disabled", false);
-      $('#TSPScanQRCodeButton').prop("disabled", false);
+      $('#TspScanQRCodeButton').prop("disabled", false);
    }
 
    if ($('#qrious').length) {
