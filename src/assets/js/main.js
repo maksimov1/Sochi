@@ -84,6 +84,35 @@ async function update_info_panel() {
    }
 }
 
+function is_ciper() {
+   return !!window.__CIPHER__;
+}
+
+function can_scan_qr_code() {
+   return !!(
+      window.web3 &&
+      window.web3.currentProvider &&
+      window.web3.currentProvider.scanQRCode
+   );
+}
+
+function init_page() {
+
+   if (can_scan_qr_code()) {
+      $('#ClientScanQRCodeButton').prop("disabled", false);
+      $('#TSPScanQRCodeButton').prop("disabled", false);
+   }
+
+   if ($('#qrious').length) {
+      window.qr = new QRious({
+         element: document.getElementById('qrious'),
+         level: 'Q',
+         size: 250,
+         value: Account
+      });
+   }
+}
+
 async function init_contract() {
    await load_contract();
 
@@ -95,15 +124,7 @@ async function init_contract() {
       update_account();
    }, 100);
 
-
-   if ($('#qrious').length) {
-      window.qr = new QRious({
-         element: document.getElementById('qrious'),
-         level: 'Q',
-         size: 250,
-         value: Account
-      });
-   }
+   init_page();
 
    update_info_panel();
 
@@ -639,6 +660,18 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
          }
       });
 
+      $("#ClientScanQRCodeButton").click(function () {
+         web3.currentProvider
+            .scanQRCode()
+            .then(data => {
+               console.log('QR Scanned:', data)
+               $("#TspClientAddress").val(data);
+            })
+            .catch(err => {
+               console.log('Error:', err)
+            });
+      });
+
       $("#TspSendTokensClientButton").click(function () {
          var address = $("#ClientAddress").val();
          var count   = $("#ClientCount").val();
@@ -650,6 +683,18 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
             balance_of(Account);
             send_transfer(address, count);
          }
+      });
+
+      $("#TspScanQRCodeButton").click(function () {
+         web3.currentProvider
+            .scanQRCode()
+            .then(data => {
+               console.log('QR Scanned:', data)
+               $("#ClientAddress").val(data);
+            })
+            .catch(err => {
+               console.log('Error:', err)
+            });
       });
 
       $("#TspBuyTokensButton").click(function () {
