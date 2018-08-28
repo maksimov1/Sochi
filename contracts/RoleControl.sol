@@ -67,12 +67,23 @@ contract RoleControl is Ownable {
       }
   }
 
-  //function addAdmin() onlyOwner public
-  //Для демонстрации и тестирования onlyOwner убран
-  //function addAdmin(address _addr) onlyOwner public
-  function addAdmin(address _addr) public {
+  function addAdmin(address _addr) onlyOwner public {
      require(roles[_addr] == Role.EMPTY);
-     roles[_addr] = Role.ADMIN;
+
+     roles[_addr]          = Role.ADMIN;
+     phoneByAddress[_addr] = 74959137474;
+  }
+
+  // Этой функции в реальной системе быть не должно
+  // Она служит демонстрационным целям
+  // В реальности администраторов может назначать
+  // только владелец контракта, так как это делается
+  // в функции выше: addAdmin.
+  function testAddAdmin(address _addr) public {
+     require(roles[_addr] == Role.EMPTY);
+
+     roles[_addr]          = Role.ADMIN;
+     phoneByAddress[_addr] = 74959137474;
   }
 
   constructor() public {
