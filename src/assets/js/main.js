@@ -189,6 +189,7 @@ function status_confirmation(label) {
 
 function status_error(label) {
    return function(error) {
+      console.log(error);
       label.text("Ошибка: " + error.message);
    }
 }

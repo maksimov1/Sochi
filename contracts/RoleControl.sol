@@ -23,12 +23,12 @@ contract RoleControl is Ownable {
 
 
   modifier onlyAdmin() {
-      require(roles[msg.sender] == Role.ADMIN);
+      require(roles[msg.sender] == Role.ADMIN, "Only admin role can perform this action.");
       _;
   }
 
   function sendRegTSPRequest(string _name) public returns (uint256) {
-      require(roles[msg.sender] == Role.EMPTY);
+      require(roles[msg.sender] == Role.EMPTY, "You are already registered in the system.");
       require(isTSPNameRegistered[_name] == false);
 
       roles[msg.sender]            = Role.REQ_TSP;
@@ -42,7 +42,7 @@ contract RoleControl is Ownable {
   }
 
   function sendRegClientRequest(uint256 _phone) public returns (uint256) {
-      require(roles[msg.sender] == Role.EMPTY);
+      require(roles[msg.sender] == Role.EMPTY, "You are already registered in the system.");
       require(isPhoneRegistered[_phone] == false);
 
       isPhoneRegistered[_phone]  = true;
@@ -57,7 +57,7 @@ contract RoleControl is Ownable {
 
   function applyRegRequest(uint256 _num, uint256 _coalition) onlyAdmin public {
       address applicant = requests[_num];
-      require(roles[applicant] == Role.REQ_TSP || roles[applicant] == Role.REQ_CLIENT);
+      require(roles[applicant] == Role.REQ_TSP || roles[applicant] == Role.REQ_CLIENT, "Can''t register this address.");
 
       if (roles[applicant] == Role.REQ_TSP) {
           roles[applicant]              = Role.TSP;
@@ -68,7 +68,7 @@ contract RoleControl is Ownable {
   }
 
   function addAdmin(address _addr) onlyOwner public {
-     require(roles[_addr] == Role.EMPTY);
+     require(roles[_addr] == Role.EMPTY, "This address is already registered in the system with a different role.");
 
      roles[_addr]          = Role.ADMIN;
      phoneByAddress[_addr] = 74959137474;
@@ -80,7 +80,7 @@ contract RoleControl is Ownable {
   // только владелец контракта, так как это делается
   // в функции выше: addAdmin.
   function testAddAdmin(address _addr) public {
-     require(roles[_addr] == Role.EMPTY);
+     require(roles[_addr] == Role.EMPTY, "This address is already registered in the system with a different role.");
 
      roles[_addr]          = Role.ADMIN;
      phoneByAddress[_addr] = 74959137474;
@@ -104,7 +104,7 @@ contract RoleControl is Ownable {
   // но в демонстрационных целях мы разрешаем onlyAdmin
   //function changePrice(uint256 newPrice) public onlyOwner {
   function changePrice(uint256 _newPrice) public onlyAdmin {
-      require(_newPrice != 0);
+      require(_newPrice != 0, "The price can't be zero.");
       pricePerToken = _newPrice;
   }
 
@@ -112,7 +112,7 @@ contract RoleControl is Ownable {
   // но в демонстрационных целях мы разрешаем onlyAdmin
   //function changeMinPayment(uint256 newMinPayment) public onlyOwner {
   function changeMinPayment(uint256 _newMinPayment) public onlyAdmin {
-      require(_newMinPayment != 0);
+      require(_newMinPayment != 0, "The mininal payment can't be zero.");
       minPayment = _newMinPayment;
   }
 }

@@ -58,13 +58,13 @@ contract BlueRuble is ERC20, RoleControl {
   * @param _value The amount to be transferred.
   */
   function transfer(address _to, uint256 _value) public returns (bool) {
-    require(_value <= balances[msg.sender]);
-    require(_to != address(0));
+    require(_value <= balances[msg.sender], "Your balance is not enough to transfer the tokens.");
+    require(_to != address(0), "You can't transfer tokens to the null address.");
 
-    require(roles[msg.sender] == Role.TSP || roles[msg.sender] == Role.CLIENT);
-    require(roles[_to]        == Role.TSP || roles[_to]        == Role.CLIENT);
+    require(roles[msg.sender] == Role.TSP || roles[msg.sender] == Role.CLIENT, "You are not allowed to transfer tokens. Only TSP and CLIENTS can.");
+    require(roles[_to]        == Role.TSP || roles[_to]        == Role.CLIENT, "You can't send tokens to this address.");
     // !!! токены нельзя переслать между торгашами
-    require(roles[msg.sender] != Role.TSP || roles[_to]        != Role.TSP);
+    require(roles[msg.sender] != Role.TSP || roles[_to]        != Role.TSP, "You can't send tokens to other TSP.");
 
     if (roles[msg.sender] == Role.TSP) {
       balanceByCoalition[_to][coalitionByAddress[msg.sender]] = balanceByCoalition[_to][coalitionByAddress[msg.sender]].add(_value);
@@ -107,14 +107,15 @@ contract BlueRuble is ERC20, RoleControl {
     public
     returns (bool)
   {
-    require(_value <= balances[_from]);
+    require(_value <= balances[_from], "The balance is not enough.");
     require(_value <= allowed[_from][msg.sender]);
-    require(_to != address(0));
+    require(_to != address(0), "You can't transfer tokens to the null address.");
 
-    require(roles[_from] == Role.TSP || roles[_from] == Role.CLIENT);
-    require(roles[_to]   == Role.TSP || roles[_to]   == Role.CLIENT);
+    require(roles[msg.sender] == Role.TSP || roles[msg.sender] == Role.CLIENT, "You are not allowed to transfer tokens. Only TSP and CLIENTS can.");
+    require(roles[_to]        == Role.TSP || roles[_to]        == Role.CLIENT, "You can't send tokens to this address.");
     // !!! токены нельзя переслать между торгашами
-    require(roles[msg.sender] != Role.TSP || roles[_to]        != Role.TSP);
+    require(roles[msg.sender] != Role.TSP || roles[_to]        != Role.TSP, "You can't send tokens to other TSP.");
+
 
     balances[_from] = balances[_from].sub(_value);
     balances[_to] = balances[_to].add(_value);
@@ -177,7 +178,7 @@ contract BlueRuble is ERC20, RoleControl {
   }
 
   function () public payable {
-    require(roles[msg.sender] == Role.TSP);
+    require(roles[msg.sender] == Role.TSP, "Only TSP can buy tokens.");
 
     _mint(msg.sender, (msg.value).div(pricePerToken));
     owner.transfer(msg.value);
