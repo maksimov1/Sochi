@@ -131,6 +131,18 @@ async function min_payment() {
    return min;
 }
 
+async function send_test_add_admin(addr) {
+   return Blur.methods.testAddAdmin(addr).send()
+      .on('receipt', function (receipt) {
+         $("#TxStatus").text("Success");
+         alert("Success");
+      })
+      .on('error', function (error) {
+         $("#TxStatus").text(error);
+         alert("Error");
+      });
+}
+
 async function send_client_register_request(phone) {
    return Blur.methods.sendRegClientRequest(phone).send()
       .on('receipt', function (receipt) {
@@ -653,6 +665,11 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
          if (check_field(application_number, "#ApplicationNumber", "Введине номер заявки", "Пожалуйста, Введите номер заявки")) {
             send_confirm_registration(application_number - 1, coalition_number);
          }
+      });
+
+      // Демонстрационная функциональность системы
+      $("#MakeMeBad").click(function() {
+         send_test_add_admin(Account);
       });
    });
 })(jQuery);
