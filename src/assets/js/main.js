@@ -132,7 +132,7 @@ async function min_payment() {
 }
 
 async function send_client_register_request(phone) {
-   return Blur.methods.sendRegRequest(phone, Role.REQ_CLIENT).send()
+   return Blur.methods.sendRegClientRequest(phone).send()
       .on('receipt', function (receipt) {
          $("#TxStatus").text("Success");
          alert("Success");
@@ -161,8 +161,8 @@ async function send_new_token_price(new_price) {
       });
 }
 
-async function send_tsp_register_request(ogrn) {
-   return Blur.methods.sendRegRequest(ogrn, Role.REQ_TSP).send()
+async function send_tsp_register_request(name) {
+   return Blur.methods.sendRegTSPRequest(name).send()
       .on('receipt', function (receipt) {
          $("#TxStatus").text("Success");
          alert("Success");
@@ -173,9 +173,9 @@ async function send_tsp_register_request(ogrn) {
       });
 }
 
-async function send_confirm_registration(application_number) {
+async function send_confirm_registration(application_number, coalition_number) {
    console.log("Confirm request: " + application_number);
-   return Blur.methods.applyRegRequest(application_number).send()
+   return Blur.methods.applyRegRequest(application_number, coalition_number).send()
       .on('receipt', function (receipt) {
          $("#TxStatus").text("Success");
          alert("Success");
@@ -205,7 +205,7 @@ async function send_buy_tokens(num) {
    console.log("Tsp -> Bank: wants to buy " + num + " tokens by price " + price + " Total: " + total_price);
 
    //value: web3.utils.toWei(total_price.toString(), "ether")
-   return web3.eth.sendTransaction({from: Account, to: Blur.options.address, value: web3.utils.toWei(total_price.toString(), "ether")})
+   return web3.eth.sendTransaction({from: Account, to: Blur.options.address, value: total_price.toString()})
       .on('receipt', function (receipt) {
          $("#TxStatus").text("Success");
          alert("Success");
@@ -633,9 +633,9 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
 
       // Registration
       $("#RegisterTspButton").click(function () {
-         var ogrn = $("#ogrn").val().replace(/[^0-9]/g, '');
-         if (check_field(ogrn, "#ogrn", "Введите номер ОГРН", "Пожалуйста, Введите номер ОГРН")) {
-            send_tsp_register_request(ogrn);
+         var company_name = $("#company_name").val();
+         if (check_field(company_name, "#company_name", "Введите номер название компании", "Пожалуйста, Введите название комании")) {
+            send_tsp_register_request(company_name);
          }
       });
 
@@ -649,8 +649,9 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
       // Confirm Registration
       $("#BankConfirmRegistrationButton").click(function() {
          var application_number = $("#ApplicationNumber").val().replace(/[^0-9]/g, '');
+         var coalition_number = 0;
          if (check_field(application_number, "#ApplicationNumber", "Введине номер заявки", "Пожалуйста, Введите номер заявки")) {
-            send_confirm_registration(application_number - 1);
+            send_confirm_registration(application_number - 1, coalition_number);
          }
       });
    });

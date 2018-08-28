@@ -10,9 +10,14 @@ contract RoleControl is Ownable {
   uint256 public pricePerToken;
   uint256 public minPayment;
 
-  mapping (address => uint256) public phoneByAddress;
-  mapping (uint256 => bool)    public isPhoneRegistered;
   mapping (uint256 => address) public requests;
+
+  mapping (uint256 => bool)    private isPhoneRegistered;
+  mapping (address => uint256) public phoneByAddress;
+
+  mapping (string => bool)    private isTSPNameRegistered;
+  mapping (address => string) public tspNameByAddress;
+
   mapping (address => uint256) public coalitionByAddress;
   uint256 public numberOfRequests;
 
@@ -22,13 +27,26 @@ contract RoleControl is Ownable {
       _;
   }
 
-  function sendRegRequest(uint256 _phone, Role _role) public returns (uint256) {
+  function sendRegTSPRequest(string _name) public returns (uint256) {
+      require(roles[msg.sender] == Role.EMPTY);
+      require(isTSPNameRegistered[_name] == false);
+
+      roles[msg.sender]            = Role.REQ_TSP;
+      isTSPNameRegistered[_name]   = true;
+      requests[numberOfRequests]   = msg.sender;
+      tspNameByAddress[msg.sender] = _name;
+
+      numberOfRequests++;
+
+      return numberOfRequests - 1;
+  }
+
+  function sendRegClientRequest(uint256 _phone) public returns (uint256) {
       require(roles[msg.sender] == Role.EMPTY);
       require(isPhoneRegistered[_phone] == false);
-      require(_role == Role.REQ_TSP || _role == Role.REQ_CLIENT);
 
       isPhoneRegistered[_phone]  = true;
-      roles[msg.sender]          = _role;
+      roles[msg.sender]          = Role.REQ_CLIENT;
       requests[numberOfRequests] = msg.sender;
       phoneByAddress[msg.sender] = _phone;
 
