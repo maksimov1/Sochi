@@ -41,9 +41,17 @@ contract RoleControl is Ownable {
       return numberOfRequests - 1;
   }
 
+  function isCorrectPhone(uint256 _phone) pure public returns (bool) {
+    if (70000000000 <= _phone && _phone <= 79999999999) {
+      return true;
+    }
+    return false;
+  }
+
   function sendRegClientRequest(uint256 _phone) public returns (uint256) {
       require(roles[msg.sender] == Role.EMPTY, "You are already registered in the system.");
-      require(isPhoneRegistered[_phone] == false);
+      require(isCorrectPhone(_phone), "The phone number is incorrect.");
+      require(isPhoneRegistered[_phone] == false, "The phone has been already registered.");
 
       isPhoneRegistered[_phone]  = true;
       roles[msg.sender]          = Role.REQ_CLIENT;

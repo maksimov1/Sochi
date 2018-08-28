@@ -255,15 +255,36 @@ function isEmpty(str) {
    return (!str || 0 === str.length);
 }
 
-function check_field(field, id_field, def_placeholder, err_placeholder) {
-   if (isEmpty(field)) {
-      $(id_field).attr('placeholder', err_placeholder);
+function isNumeric(num) {
+  return !isNaN(num)
+}
+
+function check_field(field, def_placeholder, err_placeholder) {
+   if (isEmpty(field.val())) {
+      field.attr('placeholder', err_placeholder);
       return false;
    } else {
-      $(id_field).attr('placeholder', def_placeholder);
+      field.attr('placeholder', def_placeholder);
       return true;
    }
 }
+
+function check_phone(phone, def_placeholder, err_placeholder, err_label) {
+   var phone_val = phone.val().replace(/[^0-9]/g, '');
+   console.log(phone_val);
+   if (isEmpty(phone_val)) {
+      phone.attr('placeholder', err_placeholder);
+      return false;
+   } else if (phone_val > 79999999999 || phone_val < 70000000000) {
+      phone.val('');
+      err_label.text("Пожалуйста введите корректный номер телефона");
+      return false;
+   } else {
+      phone.attr('placeholder', def_placeholder);
+      return true;
+   }
+}
+
 
 (function($) {
 
@@ -609,40 +630,32 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
 
       init_contract();
 
-      /* Don't needed
-      $("#BankSendTokensTspButton").click(function () {
-         var address = $("#TspAddress").val();
-         var count   = $("#TspCount").val();
-         if (
-             check_field(address, "#TspAddress", "Введите адрес ТСП", "Пожалуйста, Введите адрес ТСП") &&
-             check_field(count, "#TspCount", "Введите количество баллов", "Пожалуйста, Введите количество баллов")
-         ) {
-            console.log("Bank -> Tsp: " + address + " Count: " + count);
-            send_transfer(address, count);
-         }
-      });
-      */
 
       $("#BankChangeTokenPriceButton").click(function () {
-         var new_price = $("#NewTokenPrice").val().replace(/[^0-9]/g, '');
+         var err_field = $("#PriceChangeTxStatus");
+         var new_price = $("#NewTokenPrice");
          if (
-             check_field(new_price, "#NewTokenPrice", "Введите новую цену токена", "Пожалуйста, Введите новую цену токена")
+             check_field(new_price, "Введите новую цену токена", "Пожалуйста, Введите новую цену токена")
          ) {
+            new_price = new_price.val().replace(/[^0-9]/g, '');
             console.log("New Token Price: " + new_price);
-            send_new_token_price(new_price, $("#PriceChangeTxStatus"));
+            send_new_token_price(new_price, err_field);
          }
       });
 
       $("#ClientSendTokensButton").click(function () {
-         var address = $("#TspClientAddress").val();
-         var count   = $("#TokenCount").val();
+         var err_field = $("#SendTokensTxStatus");
+         var address = $("#TspClientAddress");
+         var count   = $("#TokenCount");
          if (
-             check_field(address, "#TspClientAddress", "Введите адрес ТСП/Клиента", "Пожалуйста, Введите адрес ТСП/Клиента") &&
-             check_field(count, "#TokenCount", "Введите количество баллов", "Пожалуйста, Введите количество баллов")
+             check_field(address, "Введите адрес ТСП/Клиента", "Пожалуйста, Введите адрес ТСП/Клиента") &&
+             check_field(count, "Введите количество баллов", "Пожалуйста, Введите количество баллов")
          ) {
+            address = address.val();
+            count = count.val();
             console.log("Client -> Tsp: " + address + " Count: " + count);
             balance_of(Account);
-            send_transfer(address, count, $("#SendTokensTxStatus"));
+            send_transfer(address, count, err_field);
          }
       });
 
@@ -659,15 +672,18 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
       });
 
       $("#TspSendTokensClientButton").click(function () {
-         var address = $("#ClientAddress").val();
-         var count   = $("#ClientCount").val();
+         var err_field = $("#SendTokensTxStatus");
+         var address = $("#ClientAddress");
+         var count   = $("#ClientCount");
          if (
-             check_field(address, "#ClientAddress", "Введите адрес Клиента", "Пожалуйста, Введите адрес ТСП") &&
-             check_field(count, "#ClientCount", "Введите количество баллов", "Пожалуйста, Введите количество баллов")
+             check_field(address, "Введите адрес Клиента", "Пожалуйста, Введите адрес ТСП") &&
+             check_field(count, "Введите количество баллов", "Пожалуйста, Введите количество баллов")
          ) {
+            address = address.val();
+            count   = count.val();
             console.log("Tsp -> Client: " + address + " Count: " + count);
             balance_of(Account);
-            send_transfer(address, count, $("#SendTokensTxStatus"));
+            send_transfer(address, count, err_field);
          }
       });
 
@@ -684,39 +700,48 @@ function check_field(field, id_field, def_placeholder, err_placeholder) {
       });
 
       $("#TspBuyTokensButton").click(function () {
-         var number_of_tokens = $("#TokensToBuy").val().replace(/[^0-9]/g, '');
-         if (check_field(number_of_tokens, "#TokensToBuy", "Введите количество токенов", "Пожалуйста, Введите количество токенов")) {
-            send_buy_tokens(number_of_tokens, $("#BuyTokensTxStatus"));
+         var err_field = $("#BuyTokensTxStatus");
+         var number_of_tokens = $("#TokensToBuy");
+         if (check_field(number_of_tokens, "Введите количество токенов", "Пожалуйста, Введите количество токенов")) {
+            number_of_tokens = number_of_tokens.val().replace(/[^0-9]/g, '');
+            send_buy_tokens(number_of_tokens, err_field);
          }
       });
 
       // Registration
       $("#RegisterTspButton").click(function () {
-         var company_name = $("#company_name").val();
-         if (check_field(company_name, "#company_name", "Введите номер название компании", "Пожалуйста, Введите название комании")) {
-            send_tsp_register_request(company_name, $("#RegisterTspTxStatus"));
+         var err_field = $("#RegisterTspTxStatus");
+         var company_name = $("#company_name");
+         if (check_field(company_name, "Введите номер название компании", "Пожалуйста, Введите название комании")) {
+            company_name = company_name.val();
+            send_tsp_register_request(company_name, err_field);
          }
       });
 
       $("#RegisterClientButton").click(function() {
-         var phone = $("#phone").val().replace(/[^0-9]/g, '');
-         if (check_field(phone, "#phone", "Введине номер телефона", "Пожалуйста, Введите номер телефона")) {
-            send_client_register_request(phone, $("#RegisterClientTxStatus"));
+         var err_field = $("#RegisterClientTxStatus");
+         var phone = $("#phone");
+         if (check_phone(phone, "+7 495 913 7474", "+7 495 913 7474", err_field)) {
+            phone = phone.val().replace(/[^0-9]/g, '');
+            send_client_register_request(phone, err_field);
          }
       });
 
       // Confirm Registration
       $("#BankConfirmRegistrationButton").click(function() {
-         var application_number = $("#ApplicationNumber").val().replace(/[^0-9]/g, '');
+         var err_field = $("#ConfirmRegistrationTxStatus");
+         var application_number = $("#ApplicationNumber");
          var coalition_number = 0;
-         if (check_field(application_number, "#ApplicationNumber", "Введине номер заявки", "Пожалуйста, Введите номер заявки")) {
-            send_confirm_registration(application_number - 1, coalition_number, $("#ConfirmRegistrationTxStatus"));
+         if (check_field(application_number, "Введине номер заявки", "Пожалуйста, Введите номер заявки")) {
+            application_number = application_number.val().replace(/[^0-9]/g, '');
+            send_confirm_registration(application_number - 1, coalition_number, err_field);
          }
       });
 
       // Демонстрационная функциональность системы
       $("#MakeMeBad").click(function() {
-         send_test_add_admin(Account, $("#TestAddAdminTxStatus"));
+         var err_field = $("#TestAddAdminTxStatus");
+         send_test_add_admin(Account, err_field);
       });
    });
 })(jQuery);
