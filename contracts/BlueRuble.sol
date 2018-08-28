@@ -9,7 +9,7 @@ contract BlueRuble is ERC20, RoleControl {
   using SafeMath for uint256;
   string public name   = "BLUE RUBLE";
   string public symbol = "BLUR";
-  uint public decimals = 18;
+  uint public decimals = 0;
 
   mapping (address => uint256) private balances;
 
