@@ -276,7 +276,6 @@ function check_phone(phone, def_placeholder, err_placeholder, err_label) {
       phone.attr('placeholder', err_placeholder);
       return false;
    } else if (phone_val > 79999999999 || phone_val < 70000000000) {
-      phone.val('');
       err_label.text("Пожалуйста введите корректный номер телефона");
       return false;
    } else {
