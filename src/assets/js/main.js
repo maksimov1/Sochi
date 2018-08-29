@@ -300,6 +300,20 @@ function check_address(address, def_placeholder, err_placeholder, err_label) {
    }
 }
 
+function check_number(num, def_placeholder, err_placeholder, err_label) {
+   var num_val = num.val();
+   if (isEmpty(num_val)) {
+      num.attr('placeholder', err_placeholder);
+      return false;
+   } else if (!isNumeric(num_val)) {
+      err_label.html(`<font color='${ErrColor}'>Пожалуйста, введите корректное число</font>`);
+      return false;
+   } else {
+      num.attr('placeholder', def_placeholder);
+      return true;
+   }
+}
+
 
 (function($) {
 
@@ -650,7 +664,7 @@ function check_address(address, def_placeholder, err_placeholder, err_label) {
          var err_field = $("#PriceChangeTxStatus");
          var new_price = $("#NewTokenPrice");
          if (
-             check_field(new_price, "Введите новую цену токена", "Пожалуйста, Введите новую цену токена")
+             check_number(new_price, "Введите новую цену токена", "Пожалуйста, Введите новую цену токена", err_field)
          ) {
             new_price = new_price.val().replace(/[^0-9]/g, '');
             console.log("New Token Price: " + new_price);
@@ -664,7 +678,7 @@ function check_address(address, def_placeholder, err_placeholder, err_label) {
          var count   = $("#TokenCount");
          if (
              check_address(address, "Введите адрес ТСП/Клиента", "Пожалуйста, Введите адрес ТСП/Клиента", err_field) &&
-             check_field(count, "Введите количество баллов", "Пожалуйста, Введите количество баллов")
+             check_number(count, "Введите количество баллов", "Пожалуйста, Введите количество баллов", err_field)
          ) {
             address = address.val();
             count = count.val();
@@ -692,7 +706,7 @@ function check_address(address, def_placeholder, err_placeholder, err_label) {
          var count   = $("#ClientCount");
          if (
              check_address(address, "Введите адрес Клиента", "Пожалуйста, Введите адрес Клиента", err_field) &&
-             check_field(count, "Введите количество баллов", "Пожалуйста, Введите количество баллов")
+             check_number(count, "Введите количество баллов", "Пожалуйста, Введите количество баллов", err_field)
          ) {
             address = address.val();
             count   = count.val();
@@ -717,7 +731,7 @@ function check_address(address, def_placeholder, err_placeholder, err_label) {
       $("#TspBuyTokensButton").click(function () {
          var err_field = $("#BuyTokensTxStatus");
          var number_of_tokens = $("#TokensToBuy");
-         if (check_field(number_of_tokens, "Введите количество токенов", "Пожалуйста, Введите количество токенов")) {
+         if (check_number(number_of_tokens, "Введите количество токенов", "Пожалуйста, Введите количество токенов", err_field)) {
             number_of_tokens = number_of_tokens.val().replace(/[^0-9]/g, '');
             send_buy_tokens(number_of_tokens, err_field);
          }
@@ -747,7 +761,7 @@ function check_address(address, def_placeholder, err_placeholder, err_label) {
          var err_field = $("#ConfirmRegistrationTxStatus");
          var application_number = $("#ApplicationNumber");
          var coalition_number = 0;
-         if (check_field(application_number, "Введине номер заявки", "Пожалуйста, Введите номер заявки")) {
+         if (check_number(application_number, "Введине номер заявки", "Пожалуйста, Введите номер заявки", err_field)) {
             application_number = application_number.val().replace(/[^0-9]/g, '');
             send_confirm_registration(application_number - 1, coalition_number, err_field);
          }
