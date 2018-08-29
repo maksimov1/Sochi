@@ -254,7 +254,7 @@ async function send_new_token_price(new_price, label, btn) {
       .on('error', status_error(label, btn));
 }
 
-async function send_transfer(to_addr, value, label) {
+async function send_transfer(to_addr, value, label, btn) {
    button_start(btn);
    return Blur.methods.transfer(to_addr, value).send()
       .on('receipt', status_receipt(label))
@@ -262,7 +262,7 @@ async function send_transfer(to_addr, value, label) {
       .on('error', status_error(label, btn));
 }
 
-async function send_buy_tokens(num, label) {
+async function send_buy_tokens(num, label, btn) {
    var price = await price_per_token();
    var total_price = num * price;
 
