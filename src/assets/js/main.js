@@ -28,6 +28,8 @@ var RoleToText = {
    5 : "REQ_CLIENT"
 };
 
+const ErrColor="red";
+
 var Blur;
 var Account;
 var Balance;
@@ -276,10 +278,24 @@ function check_phone(phone, def_placeholder, err_placeholder, err_label) {
       phone.attr('placeholder', err_placeholder);
       return false;
    } else if (phone_val > 79999999999 || phone_val < 70000000000) {
-      err_label.text("Пожалуйста введите корректный номер телефона");
+      err_label.html(`<font color='${ErrColor}'>Пожалуйста введите корректный номер телефона</font>`);
       return false;
    } else {
       phone.attr('placeholder', def_placeholder);
+      return true;
+   }
+}
+
+function check_address(address, def_placeholder, err_placeholder, err_label) {
+   var address_val = address.val();
+   if (isEmpty(address_val)) {
+      address.attr('placeholder', err_placeholder);
+      return false;
+   } else if (!web3.utils.isAddress(address_val)) {
+      err_label.html(`<font color='${ErrColor}'>Пожалуйста, введите корректный ethereum адрес</font>`);
+      return false;
+   } else {
+      address.attr('placeholder', def_placeholder);
       return true;
    }
 }
@@ -647,7 +663,7 @@ function check_phone(phone, def_placeholder, err_placeholder, err_label) {
          var address = $("#TspClientAddress");
          var count   = $("#TokenCount");
          if (
-             check_field(address, "Введите адрес ТСП/Клиента", "Пожалуйста, Введите адрес ТСП/Клиента") &&
+             check_address(address, "Введите адрес ТСП/Клиента", "Пожалуйста, Введите адрес ТСП/Клиента", err_field) &&
              check_field(count, "Введите количество баллов", "Пожалуйста, Введите количество баллов")
          ) {
             address = address.val();
@@ -675,7 +691,7 @@ function check_phone(phone, def_placeholder, err_placeholder, err_label) {
          var address = $("#ClientAddress");
          var count   = $("#ClientCount");
          if (
-             check_field(address, "Введите адрес Клиента", "Пожалуйста, Введите адрес ТСП") &&
+             check_address(address, "Введите адрес Клиента", "Пожалуйста, Введите адрес Клиента", err_field) &&
              check_field(count, "Введите количество баллов", "Пожалуйста, Введите количество баллов")
          ) {
             address = address.val();
@@ -711,7 +727,7 @@ function check_phone(phone, def_placeholder, err_placeholder, err_label) {
       $("#RegisterTspButton").click(function () {
          var err_field = $("#RegisterTspTxStatus");
          var company_name = $("#company_name");
-         if (check_field(company_name, "Введите номер название компании", "Пожалуйста, Введите название комании")) {
+         if (check_field(company_name, "Введите название компании", "Пожалуйста, Введите название комании")) {
             company_name = company_name.val();
             send_tsp_register_request(company_name, err_field);
          }
