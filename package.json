@@ -4,6 +4,7 @@
   "description": "Blue Rubble",
   "scripts": {
     "test": "truffle test",
+    "prebuild": "truffle compile && jq -c '{abi: .abi, contractName: .contractName, networks: .networks}' build/contracts/BlueRuble.json > build/contracts/BlueRubleABI.json",
     "build": "webpack -p",
     "dev": "webpack-dev-server",
     "watch": "webpack --watch"
@@ -20,21 +21,31 @@
     "font-awesome": "^4.7.0",
     "imagemin-mozjpeg": "^7.0.0",
     "imagemin-webpack-plugin": "^2.2.0",
-    "jquery": "^3.3.1",
     "mini-css-extract-plugin": "^0.4.2",
     "node-sass": "^4.9.3",
-    "openzeppelin-solidity": "1.12.0",
     "sass-loader": "^7.1.0",
     "source-map-support": "^0.5.3",
     "style-loader": "^0.22.1",
     "truffle": "^4.1.14",
+    "openzeppelin-solidity": "1.12.0",
     "truffle-hdwallet-provider": "0.0.6",
-    "web3": "1.0.0-beta.35",
     "webpack": "^4.17.1",
+    "webpack-bundle-analyzer": "^2.13.1",
     "webpack-cli": "^3.0.6",
     "webpack-dev-server": "^3.1.4"
   },
   "dependencies": {
-    "qrious": "^4.0.2"
+    "jquery": "^3.3.1",
+    "qrious": "^4.0.2",
+    "web3": "1.0.0-beta.35"
+  },
+  "resolutions": {
+    "web3": "1.0.0-beta.35",
+    "eth-lib": "0.2.7",
+    "bn.js": "4.11.8",
+    "web3-provider-engine": "14.0.6",
+    "ethereumjs-util": "5.2.0",
+    "eth-block-tracker": "3.0.1",
+    "ethereumjs-vm": "2.4.0"
   }
 }

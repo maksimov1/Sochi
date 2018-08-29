@@ -6,13 +6,18 @@ const ImageminPlugin = require('imagemin-webpack-plugin').default;
 const imageminMozjpeg = require('imagemin-mozjpeg');
 const CompressionWebpackPlugin = require('compression-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
-   entry: './src/assets/js/main.js',
+   entry: {
+      contract: './src/assets/js/contract.js',
+      main: './src/assets/sass/main.scss'
+   },
    mode: 'production',
    output: {
       path: path.resolve(__dirname, 'build'),
-      filename: 'main.js'
+      filename: '[name].js',
+      sourceMapFilename: '[name].map',
    },
    plugins: [
       new CleanWebpackPlugin(['build'], {exclude:['contracts']}),
@@ -23,23 +28,23 @@ module.exports = {
          { from: './src/client.html', to: "client.html" },
          { from: './src/tsp.html', to: "tsp.html" },
          { from: './src/about_us.html', to: "about_us.html" },
+         { from: './src/elements.html', to: "elements.html" },
          { from: './src/images/', to: "images" },
+         { from: './src/assets/vendor/qr-scanner-worker.min.js', to: "qr-scanner-worker.min.js" },
       ]),
       new ImageminPlugin({
          test: 'images/*',
          cacheFolder: path.resolve(__dirname, 'cache/images'),
          plugins: [
             imageminMozjpeg({
-               quality: 20,
+               quality: 60,
                progressive: true
             })
          ]
       }),
       new webpack.ProvidePlugin({
          '$': "jquery",
-         'jQuery': "jquery",
-         'window.jQuery': "jquery",
-         'Web3': "web3",
+         'jQuery': "jquery"
       }),
       new MiniCssExtractPlugin({
          // Options similar to the same options in webpackOptions.output
@@ -54,6 +59,7 @@ module.exports = {
          threshold: 10240,
          minRatio: 0.8
       }),
+      new BundleAnalyzerPlugin()
    ],
    devtool: 'source-map',
    module: {
@@ -74,6 +80,18 @@ module.exports = {
             }]
          },
       ]
+   },
+   optimization: {
+      splitChunks: {
+         chunks: "all",
+         cacheGroups: {
+            node_vendors: {
+               priority: 30,
+               test: /[\\/]node_modules[\\/]/,
+               name: 'node_modules',
+            }
+         }
+      }
    }
 }
 

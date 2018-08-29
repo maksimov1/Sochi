@@ -2,69 +2,71 @@
 
 <html>
 
-<head>
-    <title>BLUR - ТСП</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-    <link rel="stylesheet" href="./main.css" />
-    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-</head>
+   <head>
+      <title>BLUR - ТСП</title>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+      <link rel="stylesheet" href="./main.css" />
+      <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+   </head>
 
-<body class="is-preload">
+   <body class="is-preload">
 
-    <!-- Wrapper -->
-    <div id="wrapper">
+      <!-- Wrapper -->
+      <div id="wrapper">
 
-        <!-- Header -->
-        <header id="header">
+         <!-- Header -->
+         <header id="header">
             <a href="index.html" class="logo">
-                <strong>BLUR</strong>
-                <span>мечты сбываются</span>
+               <strong>BLUR</strong>
+               <span>LOYALTY PROGRAM</span>
             </a>
-            <div class="token_info">
-               <p id="current_balance"></p>
-               <p id="current_token_price"></p>
-            </div>
             <nav>
-                <a href="#menu">Меню</a>
+               <a href="#menu">Меню</a>
             </nav>
-        </header>
+         </header>
 
-        <!-- Menu -->
-        <nav id="menu">
+         <!-- Menu -->
+         <nav id="menu">
             <ul class="links">
-                <li>
-                    <a href="index.html">Главная</a>
-                </li>
-                <li>
-                    <a href="client.html">Клиент-покупатель</a>
-                </li>
-                <li>
-                    <a href="tsp.html">ТСП</a>
-                </li>
-                <li>
-                    <a href="bank.html">Банк</a>
-                </li>
-                <li>
-                    <a href="registration.html">Регистрация</a>
-                </li>
-                <li>
-                        <a href="about_us.html">О разработчиках</a>
-                    </li>
+               <li>
+                  <a href="index.html">Главная</a>
+               </li>
+               <li>
+                  <a href="client.html">Клиент-покупатель</a>
+               </li>
+               <li>
+                  <a href="tsp.html">ТСП</a>
+               </li>
+               <li>
+                  <a href="bank.html">Банк</a>
+               </li>
+               <li>
+                  <a href="registration.html">Регистрация</a>
+               </li>
+               <li>
+                  <a href="about_us.html">О разработчиках</a>
+               </li>
             </ul>
-        </nav>
+         </nav>
 
-        <!-- Main -->
-        <div id="main" class="alt">
+         <!-- Main -->
+         <div id="main" class="alt">
             <!-- One -->
             <div class="inner">
-               <header class="major">
-                  <h1>Торгово-сервисному предприятию</h1>
+               <header class="major" style="display: block; margin: 0 auto; text-align: center;">
+                  <h1>ТСП</h1>
                </header>
 
                <section id="one">
                   <div style="display: block; margin: 0 auto; text-align: center;">
                      <img id="qrious">
+                  </div>
+                  <br>
+                  <div class="box" style="display: block; margin: 0 auto; text-align: center;">
+                     <p id="current_role"></p>
+                     <p id="current_balance"></p>
+                     <p id="current_token_price"></p>
                   </div>
                </section>
 
@@ -81,55 +83,47 @@
                   <div id="SendTokensTxStatus"></div>
                   <br>
                   <button id="TspSendTokensClientButton">Перевести баллы</button>
+                  <video muted autoplay playsinline id="QRVideo" hidden></video>
                   <button id="TspScanQRCodeButton" disabled>Сканировать QR код</button>
                   <hr>
-                  <p><h3>Для покупки токенов:</h3>
+                  <p><h3>Для покупки баллов:</h3>
                   <br>1. Введите количество баллов
                   <br>2. Нажмите
-                  <b>«Купить токены»</b>
+                  <b>«Купить баллы»</b>
                   </p>
-                  <input type="text" name="TokensToBuy" id="TokensToBuy" value="" placeholder="Введите количество токенов" size="45">
+                  <input type="text" name="TokensToBuy" id="TokensToBuy" value="" placeholder="Введите количество баллов" size="45">
                   <div id="BuyTokensTxStatus"></div>
                   <br>
-                  <button id="TspBuyTokensButton">Купить токены</button>
+                  <button id="TspBuyTokensButton">Купить баллы</button>
                </section>
             </div>
-        </div>
+         </div>
 
-        <!-- Footer -->
-        <footer id="footer">
-				<div class="inner">
-					<ul class="icons">
-						<li>
-							<a href="#" class="icon alt fa-facebook">
-								<span class="label">Facebook</span>
-							</a>
-						</li>
-						<li>
-							<a href="#" class="icon alt fa-github">
-								<span class="label">GitHub</span>
-							</a>
-						</li>
-						<li>
-							<a href="#" class="icon alt fa-linkedin">
-								<span class="label">LinkedIn</span>
-							</a>
-						</li>
-					</ul>
-					<ul class="copyright">
-						<li>&copy; HiddenChain</li>
-						<li>2018
-						</li>
-					</ul>
-				</div>
-			</footer>
+         <!-- Footer -->
+         <footer id="footer">
+            <div class="inner">
+               <ul class="icons">
+                  <li>
+                     <a href="https://github.com/evdenis/blur" class="icon alt fa-github">
+                        <span class="label">GitHub</span>
+                     </a>
+                  </li>
+               </ul>
+               <ul class="copyright">
+                  <li>&copy; HiddenChain</li>
+                  <li>2018
+                  </li>
+               </ul>
+            </div>
+         </footer>
 
 
-    </div>
+      </div>
 
-    <!-- Scripts -->
-    <script src="./main.js"></script>
+      <!-- Scripts -->
+      <script src="./node_modules.js"></script>
+      <script src="./contract.js"></script>
 
-</body>
+   </body>
 
 </html>

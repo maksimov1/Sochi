@@ -2,134 +2,117 @@
 
 <html>
 
-<head>
-    <title>BLUR - банку</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-    <link rel="stylesheet" href="./main.css" />
-    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-</head>
+   <head>
+      <title>BLUR - банку</title>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+      <link rel="stylesheet" href="./main.css" />
+      <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+   </head>
 
-<body class="is-preload">
+   <body class="is-preload">
 
-    <!-- Wrapper -->
-    <div id="wrapper">
+      <!-- Wrapper -->
+      <div id="wrapper">
 
-        <!-- Header -->
-        <header id="header">
+         <!-- Header -->
+         <header id="header">
             <a href="index.html" class="logo">
-                <strong>BLUR</strong>
-                <span>мечты сбываются</span>
+               <strong>BLUR</strong>
+               <span>LOYALTY PROGRAM</span>
             </a>
-            <div class="token_info">
-               <p id="current_token_price"></p>
-            </div>
             <nav>
-                <a href="#menu">Меню</a>
+               <a href="#menu">Меню</a>
             </nav>
-        </header>
+         </header>
 
-        <!-- Menu -->
-        <nav id="menu">
+         <!-- Menu -->
+         <nav id="menu">
             <ul class="links">
-                <li>
-                    <a href="index.html">Главная</a>
-                </li>
-                <li>
-                    <a href="client.html">Клиент-покупатель</a>
-                </li>
-                <li>
-                    <a href="tsp.html">ТСП</a>
-                </li>
-                <li>
-                    <a href="bank.html">Банк</a>
-                </li>
-                <li>
-                    <a href="registration.html">Регистрация</a>
-                </li>
-                <li>
-                        <a href="about_us.html">О разработчиках</a>
-                </li>
+               <li>
+                  <a href="index.html">Главная</a>
+               </li>
+               <li>
+                  <a href="client.html">Клиент-покупатель</a>
+               </li>
+               <li>
+                  <a href="tsp.html">ТСП</a>
+               </li>
+               <li>
+                  <a href="bank.html">Банк</a>
+               </li>
+               <li>
+                  <a href="registration.html">Регистрация</a>
+               </li>
+               <li>
+                  <a href="about_us.html">О разработчиках</a>
+               </li>
             </ul>
-        </nav>
+         </nav>
 
-        <!-- Main -->
-        <div id="main" class="alt">
+         <!-- Main -->
+         <div id="main" class="alt">
+            <div class="inner">
+               <header class="major" style="display: block; margin: 0 auto; text-align: center;">
+                  <h1>Банку</h1>
+               </header>
+               <section id="one">
+                  <div class="box" style="display: block; margin: 0 auto; text-align: center;">
+                     <p id="current_role"></p>
+                     <p id="current_token_price"></p>
+                     <p id="current_registration_request"></p>
+                  </div>
+               </section>
+               <section id="two">
+                  <p><h3>Для подключения клиента-покупателя или ТСП:</h3>
+                  <br>1. Введите номер заявки
+                  <br>2. Введите номер коалиции (актуально только для регистрации ТСП)
+                  <br>3. Нажмите <b>«Одобрить заявку»</b>
+                  </p>
+                  <input type="text" name="ApplicationNumber" id="ApplicationNumber" value="" placeholder="Введите номер заявки" size="45">
+                  <br>
+                  <input type="text" name="CoalitionNumber" id="CoalitionNumber" value="" placeholder="Введите номер коалиции ТСП" size="45">
+                  <div id="ConfirmRegistrationTxStatus"></div>
+                  <br>
+                  <button id="BankConfirmRegistrationButton">Одобрить заявку</button>
+                  <hr>
+                  <p><h3>Для изменения цены балла:</h3>
+                  <br>1. Введите новую цену балла в Wei
+                  <br>2. Нажмите <b>«Изменить цену»</b>
+                  </p>
+                  <input type="text" name="NewTokenPrice" id="NewTokenPrice" value="" placeholder="Введите новую цену балла" size="45">
+                  <div id="PriceChangeTxStatus"></div>
+                  <br>
+                  <button id="BankChangeTokenPriceButton">Изменить цену</button>
+               </section>
+            </div>
+         </div>
 
-            <!-- One -->
-            <section id="one">
-                <div class="inner">
-                    <header class="major">
-                        <h1>Банку</h1>
-                    </header>
-                    <!--<p><h3>Для перевода баллов ТСП:</h3>
-                        <br>1. Введите eth адрес ТСП
-                        <br>2. Введите количество баллов
-                        <br>3. Нажмите
-                        <b>«Перевести баллы»</b>
-                    </p>
-                    <input type="text" name="TspAddress" id="TspAddress" value="" placeholder="Введите адрес ТСП" size="45">
-                    <br>
-                    <input type="text" name="TspCount" id="TspCount" value="" placeholder="Введите количество баллов" size="45">
-                    <br>
-                    <button id="BankSendTokensTspButton">Перевести баллы</button>
-                    <hr>-->
-                    <p><h3>Для подключения клиента-покупателя или ТСП:</h3>
-                        <br>1. Введите номер заявки
-                        <br>2. Нажмите <b>«Одобрить заявку»</b>
-                    </p>
-                    <input type="text" name="ApplicationNumber" id="ApplicationNumber" value="" placeholder="Введите номер заявки" size="45">
-                    <div id="ConfirmRegistrationTxStatus"></div>
-                    <br>
-                    <button id="BankConfirmRegistrationButton">Одобрить заявку</button>
-                    <hr>
-                    <p><h3>Для изменения цены токена:</h3>
-                        <br>1. Введите новую цену токена
-                        <br>2. Нажмите <b>«Изменить цену»</b>
-                    </p>
-                    <input type="text" name="NewTokenPrice" id="NewTokenPrice" value="" placeholder="Введите новую цену токена" size="45">
-                    <div id="PriceChangeTxStatus"></div>
-                    <br>
-                    <button id="BankChangeTokenPriceButton">Изменить цену</button>
-                </div>
-            </section>
-
-        </div>
-
-        <!-- Footer -->
-        <footer id="footer">
-				<div class="inner">
-					<ul class="icons">
-						<li>
-							<a href="#" class="icon alt fa-facebook">
-								<span class="label">Facebook</span>
-							</a>
-						</li>
-						<li>
-							<a href="#" class="icon alt fa-github">
-								<span class="label">GitHub</span>
-							</a>
-						</li>
-						<li>
-							<a href="#" class="icon alt fa-linkedin">
-								<span class="label">LinkedIn</span>
-							</a>
-						</li>
-					</ul>
-					<ul class="copyright">
-						<li>&copy; HiddenChain</li>
-						<li>2018
-						</li>
-					</ul>
-				</div>
-			</footer>
+         <!-- Footer -->
+         <footer id="footer">
+            <div class="inner">
+               <ul class="icons">
+                  <li>
+                     <a href="https://github.com/evdenis/blur" class="icon alt fa-github">
+                        <span class="label">GitHub</span>
+                     </a>
+                  </li>
+               </ul>
+               <ul class="copyright">
+                  <li>&copy; HiddenChain</li>
+                  <li>2018
+                  </li>
+               </ul>
+            </div>
+         </footer>
 
 
-    </div>
+      </div>
 
-    <!-- Scripts -->
-    <script src="./main.js"></script>
+      <!-- Scripts -->
+      <script src="./node_modules.js"></script>
+      <script src="./contract.js"></script>
 
-</body>
+   </body>
 
 </html>
