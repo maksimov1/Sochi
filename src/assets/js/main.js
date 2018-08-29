@@ -170,13 +170,27 @@ async function min_payment() {
    return min;
 }
 
+function button_start(btn) {
+   var btn_val = btn.html();
+   btn.prop("disabled", true);
+   btn.html(`<i class="fa fa-spinner fa-spin"></i>${btn_val}`);
+   return btn_val;
+}
+
+function button_stop(btn) {
+   var btn_val = btn.html();
+   btn.prop("disabled", false);
+   btn.html(btn_val.substring('<i class="fa fa-spinner fa-spin"></i>'.length));
+   return btn_val;
+}
+
 function status_receipt(label) {
    return function(receipt) { label.text("Статус: Началась обработка") };
 }
 
-function status_confirmation(label) {
+function status_confirmation(label, btn) {
    return function(number, receipt) {
-      if (number == 3) {
+      if (number == 12) {
          update_info_panel();
       }
       if (number <= 12) {
@@ -185,59 +199,67 @@ function status_confirmation(label) {
          label.text("Статус: Операция успешно завершена");
       } else if (number == 14) {
          label.text('');
+         button_stop(btn);
       }
    }
 }
 
-function status_error(label) {
+function status_error(label, btn) {
    return function(error) {
       console.log(error);
       label.html(`<font color='${ErrColor}'>Ошибка: ${error.message}</font>`);
+      button_stop(btn);
    }
 }
 
 
-async function send_test_add_admin(addr, label) {
+async function send_test_add_admin(addr, label, btn) {
+   button_start(btn);
    return Blur.methods.testAddAdmin(addr).send()
       .on('receipt', status_receipt(label))
-      .on('confirmation', status_confirmation(label))
-      .on('error', status_error(label));
+      .on('confirmation', status_confirmation(label, btn))
+      .on('error', status_error(label, btn));
 }
 
-async function send_client_register_request(phone, label) {
+async function send_client_register_request(phone, label, btn) {
+   button_start(btn);
    return Blur.methods.sendRegClientRequest(phone).send()
       .on('receipt', status_receipt(label))
-      .on('confirmation', status_confirmation(label))
-      .on('error', status_error(label));
+      .on('confirmation', status_confirmation(label, btn))
+      .on('error', status_error(label, btn));
 }
 
-async function send_tsp_register_request(name, label) {
+async function send_tsp_register_request(name, label, btn) {
+   button_start(btn);
    return Blur.methods.sendRegTSPRequest(name).send()
       .on('receipt', status_receipt(label))
-      .on('confirmation', status_confirmation(label))
-      .on('error', status_error(label));
+      .on('confirmation', status_confirmation(label, btn))
+      .on('error', status_error(label, btn));
 }
 
-async function send_confirm_registration(application_number, coalition_number, label) {
+async function send_confirm_registration(application_number, coalition_number, label, btn) {
    console.log("Confirm request: " + application_number);
+   button_start(btn);
    return Blur.methods.applyRegRequest(application_number, coalition_number).send()
       .on('receipt', status_receipt(label))
-      .on('confirmation', status_confirmation(label))
-      .on('error', status_error(label));
+      .on('confirmation', status_confirmation(label, btn))
+      .on('error', status_error(label, btn));
 }
 
-async function send_new_token_price(new_price, label) {
+async function send_new_token_price(new_price, label, btn) {
+   button_start(btn);
    return Blur.methods.changePrice(new_price).send()
       .on('receipt', status_receipt(label))
-      .on('confirmation', status_confirmation(label))
-      .on('error', status_error(label));
+      .on('confirmation', status_confirmation(label, btn))
+      .on('error', status_error(label, btn));
 }
 
 async function send_transfer(to_addr, value, label) {
+   button_start(btn);
    return Blur.methods.transfer(to_addr, value).send()
       .on('receipt', status_receipt(label))
-      .on('confirmation', status_confirmation(label))
-      .on('error', status_error(label));
+      .on('confirmation', status_confirmation(label, btn))
+      .on('error', status_error(label, btn));
 }
 
 async function send_buy_tokens(num, label) {
@@ -246,10 +268,11 @@ async function send_buy_tokens(num, label) {
 
    console.log("Tsp -> Bank: wants to buy " + num + " tokens by price " + price + " Total: " + total_price);
 
+   button_start(btn);
    return web3.eth.sendTransaction({from: Account, to: Blur.options.address, value: total_price.toString()})
       .on('receipt', status_receipt(label))
-      .on('confirmation', status_confirmation(label))
-      .on('error', status_error(label));
+      .on('confirmation', status_confirmation(label, btn))
+      .on('error', status_error(label, btn));
 }
 
 
@@ -668,7 +691,7 @@ function check_number(num, def_placeholder, err_placeholder, err_label) {
          ) {
             new_price = new_price.val().replace(/[^0-9]/g, '');
             console.log("New Token Price: " + new_price);
-            send_new_token_price(new_price, err_field);
+            send_new_token_price(new_price, err_field, $("#BankChangeTokenPriceButton"));
          }
       });
 
@@ -684,7 +707,7 @@ function check_number(num, def_placeholder, err_placeholder, err_label) {
             count = count.val();
             console.log("Client -> Tsp: " + address + " Count: " + count);
             balance_of(Account);
-            send_transfer(address, count, err_field);
+            send_transfer(address, count, err_field, $("#ClientSendTokensButton"));
          }
       });
 
@@ -712,7 +735,7 @@ function check_number(num, def_placeholder, err_placeholder, err_label) {
             count   = count.val();
             console.log("Tsp -> Client: " + address + " Count: " + count);
             balance_of(Account);
-            send_transfer(address, count, err_field);
+            send_transfer(address, count, err_field, $("#TspSendTokensClientButton"));
          }
       });
 
@@ -733,7 +756,7 @@ function check_number(num, def_placeholder, err_placeholder, err_label) {
          var number_of_tokens = $("#TokensToBuy");
          if (check_number(number_of_tokens, "Введите количество токенов", "Пожалуйста, Введите количество токенов", err_field)) {
             number_of_tokens = number_of_tokens.val().replace(/[^0-9]/g, '');
-            send_buy_tokens(number_of_tokens, err_field);
+            send_buy_tokens(number_of_tokens, err_field, $("#TspBuyTokensButton"));
          }
       });
 
@@ -743,7 +766,7 @@ function check_number(num, def_placeholder, err_placeholder, err_label) {
          var company_name = $("#company_name");
          if (check_field(company_name, "Введите название компании", "Пожалуйста, Введите название комании")) {
             company_name = company_name.val();
-            send_tsp_register_request(company_name, err_field);
+            send_tsp_register_request(company_name, err_field, $("#RegisterTspButton"));
          }
       });
 
@@ -752,7 +775,7 @@ function check_number(num, def_placeholder, err_placeholder, err_label) {
          var phone = $("#phone");
          if (check_phone(phone, "+7 495 913 7474", "+7 495 913 7474", err_field)) {
             phone = phone.val().replace(/[^0-9]/g, '');
-            send_client_register_request(phone, err_field);
+            send_client_register_request(phone, err_field, $("#RegisterClientButton"));
          }
       });
 
@@ -763,14 +786,14 @@ function check_number(num, def_placeholder, err_placeholder, err_label) {
          var coalition_number = 0;
          if (check_number(application_number, "Введине номер заявки", "Пожалуйста, Введите номер заявки", err_field)) {
             application_number = application_number.val().replace(/[^0-9]/g, '');
-            send_confirm_registration(application_number - 1, coalition_number, err_field);
+            send_confirm_registration(application_number - 1, coalition_number, err_field, $("#BankConfirmRegistrationButton"));
          }
       });
 
       // Демонстрационная функциональность системы
       $("#MakeMeBad").click(function() {
          var err_field = $("#TestAddAdminTxStatus");
-         send_test_add_admin(Account, err_field);
+         send_test_add_admin(Account, err_field, $("#MakeMeBad"));
       });
    });
 })(jQuery);
